@@ -1,6 +1,5 @@
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -14,7 +13,6 @@ import javax.swing.JPanel;
 
 public class InputHandeling extends JPanel{
     private BinaryTree head;
-    private BinaryTree head2;
     private double zoomFactor;
     private double screenX;
     private double screenY;
@@ -24,6 +22,7 @@ public class InputHandeling extends JPanel{
     final public double ZOOM_FACTOR = 2;
     final public int SCREEN_BOUNDS = 100000;
     final public double MIN_ZOOM = 0.01;
+    final public int UI_HEIGHT = 100;
 
 
     public InputHandeling(){
@@ -161,5 +160,8 @@ public class InputHandeling extends JPanel{
 
         g.setColor(Color.BLACK);
         head.update(g, zoomFactor, screenX, screenY);
+
+        g.setColor(Color.LIGHT_GRAY);
+        g.fillRect(getBounds().x, getBounds().height - UI_HEIGHT, getBounds().width, UI_HEIGHT);
     }
 }
