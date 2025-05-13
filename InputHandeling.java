@@ -1,23 +1,34 @@
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 import java.util.Timer;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 public class InputHandeling extends JPanel{
     private BinaryTree head;
+    private BinaryTree head2;
     private double zoomFactor;
     private double screenX;
     private double screenY;
     private Point previousMousePoint;
+    private Treap treap;
+    private ButtonBST buttons;
+    private Button currentButton;
     private Timer timer = new Timer();
+    private boolean isPressedButton;
 
     final public double ZOOM_FACTOR = 2;
     final public int SCREEN_BOUNDS = 100000;
@@ -43,26 +54,37 @@ public class InputHandeling extends JPanel{
             }
             @Override
             public void mousePressed(MouseEvent e) {
+                currentButton = buttons.search(e.getPoint());
                 previousMousePoint = e.getPoint();
             }
             @Override
             public void mouseReleased(MouseEvent e) {
-                
+                if (currentButton == buttons.search(e.getPoint()) && currentButton != null){
+                    currentButton.runPress(head);
+                }
             }
         });
 
         addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                screenX += previousMousePoint.getX() - e.getX();
-                screenY += previousMousePoint.getY() - e.getY();
-                boundScreen();
-                previousMousePoint = e.getPoint();
-                repaint();
+                if (currentButton == null){
+                    screenX += previousMousePoint.getX() - e.getX();
+                    screenY += previousMousePoint.getY() - e.getY();
+                    boundScreen();
+                    previousMousePoint = e.getPoint();
+                    repaint();
+                }
             }
             @Override
             public void mouseMoved(MouseEvent e) {
-                
+                Button b = buttons.search(e.getPoint());
+                if (b == null){
+                    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                }
+                else{
+                    setCursor(b.getCursor());
+                }
             }
         });
         addMouseWheelListener(new MouseWheelListener() {
@@ -88,42 +110,59 @@ public class InputHandeling extends JPanel{
 
         Random r = new Random();
         zoomFactor = 1;
-        /*head = new BinaryTree(0, 0);
-        head.insertLeft(1, 1);
-        BinaryTree current = head.getLeft();
-        current.insertLeft(2, 2);
-        current.insertRight(r.nextInt(10), r.nextInt(10));
-        current.getRight().insertRight(r.nextInt(10), r.nextInt(10));
-        current = current.getLeft();
-        current.insertLeft(3, 3);
-        current.insertRight(4, 4);
-        head.updatePosition();
-        System.out.println(head.getHeight() + " " + head.getLeft().getHeight() + " " + head.getLeft().getLeft().getHeight());*/
-        /*head2 = new BinaryTree(10, 4);
-        head2.x = 500;
-        head2.y = 500;*/
 
-        Treap t = new Treap(false);
+        OperationLL operations = new OperationLL();
+
+        head = new BinaryTree(false);
         int x1;
         int x2;
         for (int i = 0; i < 25; i++){
             x1 = r.nextInt(20);
             x2 = r.nextInt(20);
             //System.out.println(x1 + ", " + x2);
-            t.insert(x1, x2);
+            head.insert(x1, x2);
         }
 
-        head = treapToBinaryTree(t);
+        buttons = new ButtonBST();
+        addButtons();
+
+        //head = treapToBinaryTree(treap);
+        
+
         head.updatePosition();
         repaint();
     }
 
-    private BinaryTree treapToBinaryTree(Treap treap){
-        return treapNodeToBinaryTree(treap.getHead());
+    private void addButtons(){
+        try{
+            File imageFile = new File("C:\\Users\\nicho\\Desktop\\Executables\\Java Executables\\Extra\\Treap Visual\\Images\\Forward.png");
+            BufferedImage image = ImageIO.read(imageFile);
+        
+            Button button = new Button(new Rectangle(20, 20, 30, 30), Cursor.HAND_CURSOR) {
+                @Override
+                public void runPress() {
+                }
+
+                @Override
+                public void runPress(BinaryTree tree) {
+                    tree.enactOperation();
+                    repaint();
+                }
+            };
+            button.setVisable(true);
+            button.setImage(image);
+            buttons.insert(button);
+        }catch (IOException e){
+            
+        }
     }
 
-    private BinaryTree treapNodeToBinaryTree(TreapNode treap){
-        BinaryTree tree = new BinaryTree(treap.priority, treap.value);
+    /*private BinaryTree treapToBinaryTree(Treap treap){
+        return new BinaryTree(treapNodeToBinaryTree(treap.getHead()));
+    }
+
+    private BinaryTreeNode treapNodeToBinaryTree(TreapNode treap){
+        BinaryTreeNode tree = new BinaryTreeNode(treap.priority, treap.value);
 
         if (treap.getLeft() != null && treap.getRight() != null){
             tree.insertNodeLeft(treapNodeToBinaryTree(treap.getLeft()));
@@ -137,20 +176,20 @@ public class InputHandeling extends JPanel{
         }
 
         return tree;
-    }
+    }*/
 
     private void boundScreen(){
+        if (screenX < -SCREEN_BOUNDS * zoomFactor){
+            screenX = -SCREEN_BOUNDS * zoomFactor;
+        }
         if (screenX > SCREEN_BOUNDS * zoomFactor){
             screenX = SCREEN_BOUNDS * zoomFactor;
         }
-        else if (screenX < -SCREEN_BOUNDS * zoomFactor){
-            screenX = -SCREEN_BOUNDS * zoomFactor;
+        if (screenY < -SCREEN_BOUNDS * zoomFactor){
+            screenY = -SCREEN_BOUNDS * zoomFactor;
         }
         if (screenY > SCREEN_BOUNDS * zoomFactor){
             screenY = SCREEN_BOUNDS * zoomFactor;
-        }
-        else if (screenY < -SCREEN_BOUNDS * zoomFactor){
-            screenY = -SCREEN_BOUNDS * zoomFactor;
         }
     }
 
@@ -159,9 +198,10 @@ public class InputHandeling extends JPanel{
         g.clearRect(getBounds().x, getBounds().y, getBounds().width, getBounds().height);
 
         g.setColor(Color.BLACK);
-        head.update(g, zoomFactor, screenX, screenY);
+        head.update(g, screenX, screenY, zoomFactor);
 
         g.setColor(Color.LIGHT_GRAY);
         g.fillRect(getBounds().x, getBounds().height - UI_HEIGHT, getBounds().width, UI_HEIGHT);
+        buttons.update(g);
     }
 }

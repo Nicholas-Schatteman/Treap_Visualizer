@@ -11,11 +11,12 @@ public class TreapNode{
 
     }
 
-    public void insert(int priority, int value, boolean isMaxHeap){
-        insertNode(new TreapNode(priority, value), isMaxHeap);
+    public void insert(int priority, int value, OperationLL operations, boolean isMaxHeap){
+        insertNode(new TreapNode(priority, value), operations, isMaxHeap);
     }
 
-    public TreapNode insertNode(TreapNode tree, boolean isMaxHeap){
+    public TreapNode insertNode(TreapNode tree, OperationLL operations, boolean isMaxHeap){
+        operations.insert(OperationLL.START);
         TreapNode head = this;
 
         if (tree == null){}
@@ -28,19 +29,23 @@ public class TreapNode{
                 if (tree.value < current.value){
                     if (current.getLeft() == null){
                         current.insertNodeLeft(tree);
+                        operations.insert(OperationLL.INSERT_LEFT);
                         foundPlace = true;
                     }
                     else{
                         current = current.getLeft();
+                        operations.insert(OperationLL.CHECK_VALUE_LEFT);
                     }
                 }
                 else{
                     if (current.getRight() == null){
                         current.insertNodeRight(tree);
+                        operations.insert(OperationLL.INSERT_RIGHT);
                         foundPlace = true;
                     }
                     else{
                         current = current.getRight();
+                        operations.insert(OperationLL.CHECK_VALUE_RIGHT);
                     }
                 }
             }
@@ -49,20 +54,25 @@ public class TreapNode{
             boolean isValidHeap = false;
             if (isMaxHeap){
                 while (!isValidHeap && current != null) {
+                    operations.insert(OperationLL.VALIDATE_PRIORITY);
+
                     if (current.getLeft() != null && current.getLeft().priority > current.priority){
+                        operations.insert(OperationLL.ROTATE_LEFT);
                         if (current == head){
                             head = current.getLeft();
                         }
                         lostNode = current.rotateRight();
-                        current.getParent().insertNode(lostNode, isMaxHeap);
+                        current.getParent().insertNode(lostNode, operations, isMaxHeap);
                         current = current.getParent().getParent();
                     }
                     else if (current.getRight() != null && current.getRight().priority > current.priority){
+                        operations.insert(OperationLL.ROTATE_RIGHT);
+
                         if (current == head){
                             head = current.getRight();
                         }
                         lostNode = current.rotateLeft();
-                        current.getParent().insertNode(lostNode, isMaxHeap);
+                        current.getParent().insertNode(lostNode, operations, isMaxHeap);
                         current = current.getParent().getParent();
                     }
                     else{
@@ -72,20 +82,26 @@ public class TreapNode{
             }
             else{
                 while (!isValidHeap && current != null) {
+                    operations.insert(OperationLL.VALIDATE_PRIORITY);
+
                     if (current.getLeft() != null && current.getLeft().priority < current.priority){
+                        operations.insert(OperationLL.ROTATE_LEFT);
+
                         if (current == head){
                             head = current.getLeft();
                         }
                         lostNode = current.rotateRight();
-                        current.getParent().insertNode(lostNode, isMaxHeap);
+                        current.getParent().insertNode(lostNode, operations, isMaxHeap);
                         current = current.getParent().getParent();
                     }
                     else if (current.getRight() != null && current.getRight().priority < current.priority){
+                        operations.insert(OperationLL.ROTATE_RIGHT);
+
                         if (current == head){
                             head = current.getRight();
                         }
                         lostNode = current.rotateLeft();
-                        current.getParent().insertNode(lostNode, isMaxHeap);
+                        current.getParent().insertNode(lostNode, operations, isMaxHeap);
                         current = current.getParent().getParent();
                     }
                     else{

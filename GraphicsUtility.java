@@ -2,7 +2,6 @@ import java.awt.Graphics;
 
 public class GraphicsUtility {
     final public static double HEIGHT_TO_SIZE = 1.3913;
-    //TODO
     final public static double HEIGHT_TO_CWIDTH = 0.7739;
 
     public static void drawString(Graphics g, String data, double x, double y, double height, double screenX, double screenY, double zoomFactor){
