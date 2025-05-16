@@ -29,46 +29,57 @@ public class BinaryTree {
         return current != null;
     }
 
-    public void enactOperation(){
+    private void resetTreeNodeLL(){
         highlightedNodes.restart();
         while (highlightedNodes.hasNext()){
             highlightedNodes.next().setColor(Color.BLACK);
         }
         highlightedNodes = new BinaryTreeLL();
+    }
+
+    public void enactOperation(){
         
         int operation = tree.getOperations().next();
         System.out.println(operation);
         switch (operation) {//TODO: Finish operations
             case OperationLL.START:
+                resetTreeNodeLL();
                 current = head;
-                //highlightedNodes.insert(head);
+                highlightedNodes.insert(current);
                 break;
 
             case OperationLL.FIRST_INSERT:
+                resetTreeNodeLL();
                 head = tree.getNodeOperations().next();
                 break;
 
             case OperationLL.CHECK_VALUE_LEFT:
+                resetTreeNodeLL();
                 if (current.getLeft() != null){
                     current = current.getLeft();
                 }
-                //highlightedNodes.insert(current);
+                highlightedNodes.insert(current);
                 break;
         
             case OperationLL.CHECK_VALUE_RIGHT:
-            if (current.getRight() != null){
-                current = current.getRight();
-            }
-                //highlightedNodes.insert(current);
+                resetTreeNodeLL();
+                if (current.getRight() != null){
+                    current = current.getRight();
+                }
+                highlightedNodes.insert(current);
                 break;
 
             case OperationLL.INSERT_LEFT:
+                resetTreeNodeLL();
                 current.insertNodeLeft(tree.getNodeOperations().next());
+                highlightedNodes.insert(current.getLeft());
                 head.updatePosition();
                 break;
 
             case OperationLL.INSERT_RIGHT:
+                resetTreeNodeLL();
                 current.insertNodeRight(tree.getNodeOperations().next());
+                highlightedNodes.insert(current.getRight());
                 head.updatePosition();
                 break;
 
@@ -100,20 +111,18 @@ public class BinaryTree {
                 break;
         
             case OperationLL.VALIDATE_PRIORITY:
-                //highlightedNodes.insert(current);
+                resetTreeNodeLL();
+                highlightedNodes.insert(current);
                 if (current.getLeft() != null){
-                    //highlightedNodes.insert(current.getLeft());
+                    highlightedNodes.insert(current.getLeft());
                 }
                 if (current.getRight() != null){
-                    //highlightedNodes.insert(current.getRight());
+                    highlightedNodes.insert(current.getRight());
                 }
                 break;
 
             default:
                 break;
-        }
-        if (current != null){
-            highlightedNodes.insert(current);
         }
         while (highlightedNodes.hasNext()){
             highlightedNodes.next().setColor(Color.RED);
