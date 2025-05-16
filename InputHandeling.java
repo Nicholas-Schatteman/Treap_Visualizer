@@ -61,6 +61,9 @@ public class InputHandeling extends JPanel{
             public void mouseReleased(MouseEvent e) {
                 if (currentButton == buttons.search(e.getPoint()) && currentButton != null){
                     currentButton.runPress(head);
+                    if (head != null && head.hasCurrent()){
+                        //System.out.println(head.getCurrentValue());
+                    }
                 }
             }
         });
@@ -138,7 +141,7 @@ public class InputHandeling extends JPanel{
             File imageFile = new File("C:\\Users\\nicho\\Desktop\\Executables\\Java Executables\\Extra\\Treap Visual\\Images\\Forward.png");
             BufferedImage image = ImageIO.read(imageFile);
         
-            Button button = new Button(new Rectangle(20, 20, 30, 30), Cursor.HAND_CURSOR) {
+            Button button = new Button(new Rectangle(getBounds().width + 60, getBounds().height + 30, 30, 30), Cursor.HAND_CURSOR) {
                 @Override
                 public void runPress() {
                 }

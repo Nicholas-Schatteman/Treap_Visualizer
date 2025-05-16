@@ -16,11 +16,12 @@ public class TreapNode{
     }
 
     public TreapNode insertNode(TreapNode tree, OperationLL operations, boolean isMaxHeap){
-        operations.insert(OperationLL.START);
         TreapNode head = this;
 
         if (tree == null){}
         else{
+            operations.insert(OperationLL.START);
+
             boolean foundPlace = false;
             TreapNode current = this;
 
@@ -50,29 +51,26 @@ public class TreapNode{
                 }
             }
             
-            TreapNode lostNode;
             boolean isValidHeap = false;
             if (isMaxHeap){
                 while (!isValidHeap && current != null) {
                     operations.insert(OperationLL.VALIDATE_PRIORITY);
 
                     if (current.getLeft() != null && current.getLeft().priority > current.priority){
-                        operations.insert(OperationLL.ROTATE_LEFT);
+                        operations.insert(OperationLL.ROTATE_RIGHT);
                         if (current == head){
                             head = current.getLeft();
                         }
-                        lostNode = current.rotateRight();
-                        current.getParent().insertNode(lostNode, operations, isMaxHeap);
+                        current.rotateRight();
                         current = current.getParent().getParent();
                     }
                     else if (current.getRight() != null && current.getRight().priority > current.priority){
-                        operations.insert(OperationLL.ROTATE_RIGHT);
+                        operations.insert(OperationLL.ROTATE_LEFT);
 
                         if (current == head){
                             head = current.getRight();
                         }
-                        lostNode = current.rotateLeft();
-                        current.getParent().insertNode(lostNode, operations, isMaxHeap);
+                        current.rotateLeft();
                         current = current.getParent().getParent();
                     }
                     else{
@@ -85,23 +83,21 @@ public class TreapNode{
                     operations.insert(OperationLL.VALIDATE_PRIORITY);
 
                     if (current.getLeft() != null && current.getLeft().priority < current.priority){
-                        operations.insert(OperationLL.ROTATE_LEFT);
+                        operations.insert(OperationLL.ROTATE_RIGHT);
 
                         if (current == head){
                             head = current.getLeft();
                         }
-                        lostNode = current.rotateRight();
-                        current.getParent().insertNode(lostNode, operations, isMaxHeap);
+                        current.rotateRight();
                         current = current.getParent().getParent();
                     }
                     else if (current.getRight() != null && current.getRight().priority < current.priority){
-                        operations.insert(OperationLL.ROTATE_RIGHT);
+                        operations.insert(OperationLL.ROTATE_LEFT);
 
                         if (current == head){
                             head = current.getRight();
                         }
-                        lostNode = current.rotateLeft();
-                        current.getParent().insertNode(lostNode, operations, isMaxHeap);
+                        current.rotateLeft();
                         current = current.getParent().getParent();
                     }
                     else{
@@ -127,55 +123,55 @@ public class TreapNode{
 
     public void insertNodeLeft(TreapNode node){
         left = node;
-        node.parent = this;
+        if (node != null){
+            node.parent = this;
+        }
     }
 
     public void insertNodeRight(TreapNode node){
         right = node;
-        node.parent = this;
+        if (node != null){
+            node.parent = this;
+        }
     }
 
-    public TreapNode rotateLeft(){
+    public void rotateLeft(){
         TreapNode lostNode = right.left;
 
         if (parent == null){
             right.parent = null;
             right.insertNodeLeft(this);
-            this.right = null;
+            insertNodeRight(lostNode);
         }
         else if (parent.left == this){
             parent.insertNodeLeft(right);
             right.insertNodeLeft(this);
-            this.right = null;
+            insertNodeRight(lostNode);
         }
         else{
             parent.insertNodeRight(right);
             right.insertNodeLeft(this);
-            this.right = null;
+            insertNodeRight(lostNode);
         }
-
-        return lostNode;
     }
 
-    public TreapNode rotateRight(){
+    public void rotateRight(){
         TreapNode lostNode = left.right;
 
         if (parent == null){
             left.parent = null;
             left.insertNodeRight(this);
-            this.left = null;
+            insertNodeLeft(lostNode);
         }
         else if (parent.left == this){
             parent.insertNodeLeft(left);
             left.insertNodeRight(this);
-            this.left = null;
+            insertNodeLeft(lostNode);
         }
         else{
             parent.insertNodeRight(left);
             left.insertNodeRight(this);
-            this.left = null;
+            insertNodeLeft(lostNode);
         }
-
-        return lostNode;
     }
 }

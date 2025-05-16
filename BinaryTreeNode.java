@@ -40,13 +40,23 @@ public class BinaryTreeNode {
         return right;
     }
 
+    public int getPriority() {
+        return priority;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
     public void insertLeft(int priority, int value){
         insertNodeLeft(new BinaryTreeNode(priority, value));
     }
 
     public void insertNodeLeft(BinaryTreeNode node){
         left = node;
-        node.parent = this;
+        if (node != null){
+            node.parent = this;
+        }
     }
 
     public void insertRight(int priority, int value){
@@ -55,7 +65,9 @@ public class BinaryTreeNode {
 
     public void insertNodeRight(BinaryTreeNode node){
         right = node;
-        node.parent = this;
+        if (node != null){
+            node.parent = this;
+        }
     }
 
     public void addStep(){
@@ -79,33 +91,42 @@ public class BinaryTreeNode {
     }
 
     public void rotateLeft(){
+        BinaryTreeNode lostNode = right.left;
 
-        if (parent.left == this){
+        if (parent == null){
+            right.parent = null;
+            right.insertNodeLeft(this);
+            insertNodeRight(lostNode);
+        }
+        else if (parent.left == this){
             parent.insertNodeLeft(right);
             right.insertNodeLeft(this);
+            insertNodeRight(lostNode);
         }
         else{
             parent.insertNodeRight(right);
             right.insertNodeLeft(this);
+            insertNodeRight(lostNode);
         }
     }
 
     public void rotateRight(){
+        BinaryTreeNode lostNode = left.right;
 
         if (parent == null){
             left.parent = null;
             left.insertNodeRight(this);
-            this.left = null;
+            insertNodeLeft(lostNode);
         }
         else if (parent.left == this){
             parent.insertNodeLeft(left);
             left.insertNodeRight(this);
-            this.left = null;
+            insertNodeLeft(lostNode);
         }
         else{
             parent.insertNodeRight(left);
             left.insertNodeRight(this);
-            this.left = null;
+            insertNodeLeft(lostNode);
         }
     }
 

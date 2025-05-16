@@ -1,4 +1,4 @@
-public class TreeNode {
+abstract public class TreeNode {
     private TreeNode parent;
     private TreeNode left;
     private TreeNode right;
@@ -25,45 +25,45 @@ public class TreeNode {
         node.parent = this;
     }
 
-    public TreeNode rotateLeft(){
+    public TreeNode rotateNodeLeft(TreeNode node){
         TreeNode lostNode = right.left;
 
         if (parent == null){
-            right.parent = null;
-            right.insertNodeLeft(this);
-            this.right = null;
+            node.right.parent = null;
+            node.right.insertNodeLeft(this);
+            node.right = null;
         }
         else if (parent.left == this){
-            parent.insertNodeLeft(right);
-            right.insertNodeLeft(this);
-            this.right = null;
+            node.parent.insertNodeLeft(right);
+            node.right.insertNodeLeft(this);
+            node.right = null;
         }
         else{
-            parent.insertNodeRight(right);
-            right.insertNodeLeft(this);
-            this.right = null;
+            node.parent.insertNodeRight(right);
+            node.right.insertNodeLeft(this);
+            node.right = null;
         }
 
         return lostNode;
     }
 
-    public TreeNode rotateRight(){
-        TreeNode lostNode = left.right;
+    public TreeNode rotateRight(TreeNode node){
+        TreeNode lostNode = node.left.right;
 
         if (parent == null){
-            left.parent = null;
-            left.insertNodeRight(this);
-            this.left = null;
+            node.left.parent = null;
+            node.left.insertNodeRight(this);
+            node.left = null;
         }
         else if (parent.left == this){
-            parent.insertNodeLeft(left);
-            left.insertNodeRight(this);
-            this.left = null;
+            node.parent.insertNodeLeft(left);
+            node.left.insertNodeRight(this);
+            node.left = null;
         }
         else{
-            parent.insertNodeRight(left);
-            left.insertNodeRight(this);
-            this.left = null;
+            node.parent.insertNodeRight(left);
+            node.left.insertNodeRight(this);
+            node.left = null;
         }
 
         return lostNode;
