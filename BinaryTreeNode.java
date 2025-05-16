@@ -48,6 +48,10 @@ public class BinaryTreeNode {
         return value;
     }
 
+    public BinaryTreeNode duplicate(){
+        return new BinaryTreeNode(priority, value);
+    }
+
     public void insertLeft(int priority, int value){
         insertNodeLeft(new BinaryTreeNode(priority, value));
     }

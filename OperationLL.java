@@ -5,6 +5,8 @@ public class OperationLL {
     private OperationLLNode current;
     private OperationLLNode searchNode;
 
+    private boolean isAtExtreme = true;
+
     final static public int START = 0;
     final static public int FIRST_INSERT = 1;
     final static public int CHECK_VALUE_LEFT = 2;
@@ -38,18 +40,49 @@ public class OperationLL {
     }
 
     public int next(){
-        if (current != null){
-            int returnVal = current.value;
+        if (!hasNext()){
+            throw new ArrayIndexOutOfBoundsException("No next value to return");
+        }
+        else if (current.getNext() == null){
+            isAtExtreme = true;
+            return current.value;
+        }
+        else if (isAtExtreme){
+            isAtExtreme = false;
             current = current.getNext();
-            return returnVal;
+            return current.getPrevious().value;
         }
         else{
-            return -1;
+            current = current.getNext();
+            return current.getPrevious().value;
+        }
+    }
+
+    public int previous(){
+        if (!hasPrevious()){
+            throw new ArrayIndexOutOfBoundsException("No previous value to return");
+        }
+        else if (current.getPrevious() == null){
+            isAtExtreme = true;
+            return current.value;
+        }
+        else if (isAtExtreme){
+            isAtExtreme = false;
+            current = current.getPrevious();
+            return current.getNext().value;
+        }
+        else{
+            current = current.getPrevious();
+            return current.getNext().value;
         }
     }
 
     public boolean hasNext(){
-        return current != null;
+        return current.getNext() != null || !isAtExtreme;
+    }
+
+    public boolean hasPrevious(){
+        return current.getPrevious() != null || !isAtExtreme;
     }
 
     public boolean isAtStart(){
@@ -57,15 +90,11 @@ public class OperationLL {
     }
 
     public boolean isBeforeSearch(){
-        return current.getNext() == searchNode;
+        return current.getNext().getNext() == searchNode;
     }
 
     public OperationLLNode getFirst() {
         return first;
-    }
-
-    public int getPrevious(){
-        return current.getPrevious().value;
     }
 
     public int getCurrent(){

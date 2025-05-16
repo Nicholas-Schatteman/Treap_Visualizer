@@ -29,6 +29,30 @@ public class BinaryTree {
         return current != null;
     }
 
+    public boolean hasNext(){
+        return tree.getOperations().hasNext();
+    }
+
+    public boolean hasPrevious(){
+        return tree.getOperations().hasPrevious();
+    }
+
+    public void resetTreap(){
+        head = null;
+        current = null;
+        resetTreeNodeLL();
+    }
+
+    public void setSearchOperation(){
+        tree.getOperations().setSearchCurrent();
+        tree.getOperations().restart();
+        tree.getNodeOperations().restart();
+    }
+
+    public boolean isBeforeSearch(){
+        return tree.getOperations().isBeforeSearch();
+    }
+
     private void resetTreeNodeLL(){
         highlightedNodes.restart();
         while (highlightedNodes.hasNext()){
@@ -37,10 +61,9 @@ public class BinaryTree {
         highlightedNodes = new BinaryTreeLL();
     }
 
-    public void enactOperation(){
-        
+    public void nextOperation(){
         int operation = tree.getOperations().next();
-        System.out.println(operation);
+
         switch (operation) {//TODO: Finish operations
             case OperationLL.START:
                 resetTreeNodeLL();
@@ -50,7 +73,7 @@ public class BinaryTree {
 
             case OperationLL.FIRST_INSERT:
                 resetTreeNodeLL();
-                head = tree.getNodeOperations().next();
+                head = tree.getNodeOperations().next().duplicate();
                 break;
 
             case OperationLL.CHECK_VALUE_LEFT:
@@ -71,14 +94,14 @@ public class BinaryTree {
 
             case OperationLL.INSERT_LEFT:
                 resetTreeNodeLL();
-                current.insertNodeLeft(tree.getNodeOperations().next());
+                current.insertNodeLeft(tree.getNodeOperations().next().duplicate());
                 highlightedNodes.insert(current.getLeft());
                 head.updatePosition();
                 break;
 
             case OperationLL.INSERT_RIGHT:
                 resetTreeNodeLL();
-                current.insertNodeRight(tree.getNodeOperations().next());
+                current.insertNodeRight(tree.getNodeOperations().next().duplicate());
                 highlightedNodes.insert(current.getRight());
                 head.updatePosition();
                 break;

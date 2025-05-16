@@ -35,6 +35,11 @@ public class InputHandeling extends JPanel{
     final public double MIN_ZOOM = 0.01;
     final public int UI_HEIGHT = 100;
 
+    final public int OPERATION_BUTTON_WIDTH = 30;
+    final public int NEXT_BUTTON_X = 500;
+    final public int NEXT_BUTTON_Y = 500;
+    
+
 
     public InputHandeling(){
 
@@ -60,7 +65,9 @@ public class InputHandeling extends JPanel{
             @Override
             public void mouseReleased(MouseEvent e) {
                 if (currentButton == buttons.search(e.getPoint()) && currentButton != null){
-                    currentButton.runPress(head);
+                    if (head.hasNext()){
+                        currentButton.runPress(head);
+                    }
                     if (head != null && head.hasCurrent()){
                         //System.out.println(head.getCurrentValue());
                     }
@@ -141,14 +148,38 @@ public class InputHandeling extends JPanel{
             File imageFile = new File("C:\\Users\\nicho\\Desktop\\Executables\\Java Executables\\Extra\\Treap Visual\\Images\\Forward.png");
             BufferedImage image = ImageIO.read(imageFile);
         
-            Button button = new Button(new Rectangle(getBounds().width + 60, getBounds().height + 30, 30, 30), Cursor.HAND_CURSOR) {
+            Button button = new Button(new Rectangle(NEXT_BUTTON_X, NEXT_BUTTON_Y, OPERATION_BUTTON_WIDTH, OPERATION_BUTTON_WIDTH), Cursor.HAND_CURSOR) {
                 @Override
                 public void runPress() {
                 }
 
                 @Override
                 public void runPress(BinaryTree tree) {
-                    tree.enactOperation();
+                    tree.nextOperation();
+                    repaint();
+                }
+            };
+            button.setVisable(true);
+            button.setImage(image);
+            buttons.insert(button);
+
+            imageFile = new File("C:\\Users\\nicho\\Desktop\\Executables\\Java Executables\\Extra\\Treap Visual\\Images\\Back.png");
+            image = ImageIO.read(imageFile);
+
+            button = new Button(new Rectangle(NEXT_BUTTON_X - 60, NEXT_BUTTON_Y, OPERATION_BUTTON_WIDTH, OPERATION_BUTTON_WIDTH), Cursor.HAND_CURSOR) {
+                @Override
+                public void runPress() {
+                }
+
+                @Override
+                public void runPress(BinaryTree tree) {
+                    tree.resetTreap();
+                    tree.setSearchOperation();
+
+                    while (!tree.isBeforeSearch()){
+                        tree.nextOperation();
+                    }
+                    tree.nextOperation();
                     repaint();
                 }
             };
