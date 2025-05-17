@@ -5,20 +5,21 @@ public class OperationLL {
     private OperationLLNode current;
     private OperationLLNode searchNode;
 
-    private boolean isAtExtreme = true;
+    private boolean isFinished = false;
 
     final static public int START = 0;
-    final static public int FIRST_INSERT = 1;
-    final static public int CHECK_VALUE_LEFT = 2;
-    final static public int CHECK_VALUE_RIGHT = 3;
-    final static public int INSERT_LEFT = 4;
-    final static public int INSERT_RIGHT = 5;
-    final static public int ROTATE_LEFT = 6;
-    final static public int ROTATE_RIGHT = 7;
-    final static public int VALIDATE_PRIORITY = 8;
+    final static public int END = 1;
+    final static public int FIRST_INSERT = 2;
+    final static public int CHECK_VALUE_LEFT = 3;
+    final static public int CHECK_VALUE_RIGHT = 4;
+    final static public int INSERT_LEFT = 5;
+    final static public int INSERT_RIGHT = 6;
+    final static public int ROTATE_LEFT = 7;
+    final static public int ROTATE_RIGHT = 8;
+    final static public int VALIDATE_PRIORITY = 9;
 
     public void insert(OperationLL operations){
-        insertNode(operations.getFirst());
+        insertNode(operations.first);
     }
 
     public void insert(int operation){
@@ -44,45 +45,22 @@ public class OperationLL {
             throw new ArrayIndexOutOfBoundsException("No next value to return");
         }
         else if (current.getNext() == null){
-            isAtExtreme = true;
+            isFinished = true;
             return current.value;
         }
-        else if (isAtExtreme){
-            isAtExtreme = false;
-            current = current.getNext();
-            return current.getPrevious().value;
-        }
         else{
+            int returnVal = current.value;
             current = current.getNext();
-            return current.getPrevious().value;
-        }
-    }
-
-    public int previous(){
-        if (!hasPrevious()){
-            throw new ArrayIndexOutOfBoundsException("No previous value to return");
-        }
-        else if (current.getPrevious() == null){
-            isAtExtreme = true;
-            return current.value;
-        }
-        else if (isAtExtreme){
-            isAtExtreme = false;
-            current = current.getPrevious();
-            return current.getNext().value;
-        }
-        else{
-            current = current.getPrevious();
-            return current.getNext().value;
+            return returnVal;
         }
     }
 
     public boolean hasNext(){
-        return current.getNext() != null || !isAtExtreme;
+        return !isFinished;
     }
 
     public boolean hasPrevious(){
-        return current.getPrevious() != null || !isAtExtreme;
+        return !(first == current);
     }
 
     public boolean isAtStart(){
@@ -90,11 +68,7 @@ public class OperationLL {
     }
 
     public boolean isBeforeSearch(){
-        return current.getNext().getNext() == searchNode;
-    }
-
-    public OperationLLNode getFirst() {
-        return first;
+        return current.getNext() == searchNode;
     }
 
     public int getCurrent(){
@@ -103,10 +77,7 @@ public class OperationLL {
 
     public void restart(){
         current = first;
-    }
-
-    public void setStartCurrent(){
-        start = current;
+        isFinished = false;
     }
 
     public void setStartLast(){
@@ -114,6 +85,11 @@ public class OperationLL {
     }
 
     public void setSearchCurrent(){
-        searchNode = current;
+        if (isFinished){
+            searchNode = null;
+        }
+        else{
+            searchNode = current;
+        }
     }
 }

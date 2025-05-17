@@ -19,16 +19,13 @@ import javax.swing.JPanel;
 
 public class InputHandeling extends JPanel{
     private BinaryTree head;
-    private BinaryTree head2;
     private double zoomFactor;
     private double screenX;
     private double screenY;
     private Point previousMousePoint;
-    private Treap treap;
     private ButtonBST buttons;
     private Button currentButton;
     private Timer timer = new Timer();
-    private boolean isPressedButton;
 
     final public double ZOOM_FACTOR = 2;
     final public int SCREEN_BOUNDS = 100000;
@@ -65,9 +62,7 @@ public class InputHandeling extends JPanel{
             @Override
             public void mouseReleased(MouseEvent e) {
                 if (currentButton == buttons.search(e.getPoint()) && currentButton != null){
-                    if (head.hasNext()){
-                        currentButton.runPress(head);
-                    }
+                    currentButton.runPress(head);
                     if (head != null && head.hasCurrent()){
                         //System.out.println(head.getCurrentValue());
                     }
@@ -121,12 +116,10 @@ public class InputHandeling extends JPanel{
         Random r = new Random();
         zoomFactor = 1;
 
-        OperationLL operations = new OperationLL();
-
         head = new BinaryTree(false);
         int x1;
         int x2;
-        for (int i = 0; i < 25; i++){
+        for (int i = 0; i < r.nextInt(4) + 1; i++){
             x1 = r.nextInt(20);
             x2 = r.nextInt(20);
             //System.out.println(x1 + ", " + x2);
@@ -155,8 +148,10 @@ public class InputHandeling extends JPanel{
 
                 @Override
                 public void runPress(BinaryTree tree) {
-                    tree.nextOperation();
-                    repaint();
+                    if (tree.hasNext()){
+                        tree.nextOperation();
+                        repaint();
+                    }
                 }
             };
             button.setVisable(true);
@@ -173,14 +168,15 @@ public class InputHandeling extends JPanel{
 
                 @Override
                 public void runPress(BinaryTree tree) {
-                    tree.resetTreap();
-                    tree.setSearchOperation();
+                    if (tree.hasPrevious()){
+                        tree.setSearchOperation();
+                        tree.resetTreap();
 
-                    while (!tree.isBeforeSearch()){
-                        tree.nextOperation();
+                        while (!tree.isBeforeSearch()){
+                            tree.nextOperation();
+                        }
+                        repaint();
                     }
-                    tree.nextOperation();
-                    repaint();
                 }
             };
             button.setVisable(true);

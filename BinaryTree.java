@@ -41,12 +41,12 @@ public class BinaryTree {
         head = null;
         current = null;
         resetTreeNodeLL();
+        tree.getOperations().restart();
+        tree.getNodeOperations().restart();
     }
 
     public void setSearchOperation(){
         tree.getOperations().setSearchCurrent();
-        tree.getOperations().restart();
-        tree.getNodeOperations().restart();
     }
 
     public boolean isBeforeSearch(){
@@ -69,6 +69,10 @@ public class BinaryTree {
                 resetTreeNodeLL();
                 current = head;
                 highlightedNodes.insert(current);
+                break;
+
+            case OperationLL.END:
+                resetTreeNodeLL();
                 break;
 
             case OperationLL.FIRST_INSERT:

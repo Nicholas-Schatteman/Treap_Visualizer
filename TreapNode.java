@@ -106,6 +106,7 @@ public class TreapNode{
                 }
             }
         }
+        operations.insert(OperationLL.END);
         return head;
     }
 

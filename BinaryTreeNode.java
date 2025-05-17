@@ -73,27 +73,7 @@ public class BinaryTreeNode {
             node.parent = this;
         }
     }
-
-    public void addStep(){
-
-    }
-
-    public void goStart(){
-
-    }
-
-    public void stepForward(){
-
-    }
-
-    public void stepBack(){
-
-    }
-
-    public void goEnd(){
-
-    }
-
+    
     public void rotateLeft(){
         BinaryTreeNode lostNode = right.left;
 
