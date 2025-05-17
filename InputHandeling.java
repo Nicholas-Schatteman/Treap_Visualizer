@@ -3,6 +3,8 @@ import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -13,12 +15,11 @@ import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.CharacterCodingException;
 import java.util.Random;
-import java.util.Timer;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 public class InputHandeling extends JPanel{
     private BinaryTree head;
@@ -30,7 +31,7 @@ public class InputHandeling extends JPanel{
     private Button currentButton;
     private TextBox currentTextBox;
     private int currentKeyCode;
-    private Timer timer = new Timer();
+    private Timer graphicsUpdate;
 
     final public double ZOOM_FACTOR = 2;
     final public int SCREEN_BOUNDS = 100000;
@@ -45,6 +46,7 @@ public class InputHandeling extends JPanel{
 
 
     public InputHandeling(){
+
 
         addKeyListener(new KeyListener() {
             @Override
@@ -100,12 +102,19 @@ public class InputHandeling extends JPanel{
             }
             @Override
             public void mouseReleased(MouseEvent e) {
+                if (currentTextBox != null){
+                    currentTextBox.disengage();
+                }
+
                 if (currentButton == buttons.search(e.getPoint()) && currentButton != null){
-                    currentTextBox = (TextBox)currentButton.runPress();
+                    currentTextBox = (TextBox)currentButton.runPress(e.getPoint());
                     currentButton.runPress(head);
                     if (head != null && head.hasCurrent()){
                         //System.out.println(head.getCurrentValue());
                     }
+                }
+                else{
+                    currentTextBox = null;
                 }
             }
         });
@@ -153,6 +162,15 @@ public class InputHandeling extends JPanel{
             }
         });
 
+        graphicsUpdate = new Timer(24, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                repaint();
+            }
+        });
+        graphicsUpdate.setRepeats(true);
+        graphicsUpdate.start();
+
         Random r = new Random();
         zoomFactor = 1;
 
@@ -183,7 +201,7 @@ public class InputHandeling extends JPanel{
         
             ImageButton button = new ImageButton(new Rectangle(NEXT_BUTTON_X, NEXT_BUTTON_Y, OPERATION_BUTTON_WIDTH, OPERATION_BUTTON_WIDTH), Cursor.HAND_CURSOR) {
                 @Override
-                public Button runPress() {
+                public Button runPress(Point p) {
                     return null;
                 }
 
@@ -204,7 +222,7 @@ public class InputHandeling extends JPanel{
 
             button = new ImageButton(new Rectangle(NEXT_BUTTON_X - OPERATION_SEPERATION, NEXT_BUTTON_Y, OPERATION_BUTTON_WIDTH, OPERATION_BUTTON_WIDTH), Cursor.HAND_CURSOR) {
                 @Override
-                public Button runPress() {
+                public Button runPress(Point p) {
                     return null;
                 }
 
@@ -226,6 +244,10 @@ public class InputHandeling extends JPanel{
             buttons.insert(button);
 
             TextBox textBox = new TextBox(new Rectangle(100, 100, 100, 20), 3);
+            textBox.setVisable(true);
+            buttons.insert(textBox);
+
+            textBox = new TextBox(new Rectangle(150, 150, 75, 15), 6);
             textBox.setVisable(true);
             buttons.insert(textBox);
         }catch (IOException e){
@@ -274,10 +296,15 @@ public class InputHandeling extends JPanel{
         g.clearRect(getBounds().x, getBounds().y, getBounds().width, getBounds().height);
 
         g.setColor(Color.BLACK);
+        if (head.isMoving()){
+            head.updatePosition();
+        }
         head.update(g, screenX, screenY, zoomFactor);
 
         g.setColor(Color.LIGHT_GRAY);
         g.fillRect(getBounds().x, getBounds().height - UI_HEIGHT, getBounds().width, UI_HEIGHT);
         buttons.update(g);
+
+        
     }
 }

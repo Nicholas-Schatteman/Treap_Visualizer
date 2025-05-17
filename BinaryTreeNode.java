@@ -10,6 +10,8 @@ public class BinaryTreeNode {
     private Color color;
     public int x;
     public int y;
+    public int startX;
+    public int startY;
 
     final public int CIRCLE_SIZE = 100;
     final public int CIRCLE_OFFSET = 7;
@@ -159,7 +161,9 @@ public class BinaryTreeNode {
         return Math.max(countLeft, countRight);
     }
 
-    
+    private double transitionFunction(double x0, double x1, double time){
+        return x0 * (1 - time) + x1 * time;
+    }
 
     public void updatePosition(){
         if (left != null && right != null){

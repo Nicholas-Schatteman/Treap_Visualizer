@@ -1,23 +1,22 @@
 import java.awt.Rectangle;
+import java.time.Clock;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
+import java.awt.Point;
 
 public class TextBox extends Button{
     private String text;
     private int sizeLimit;
     private int position;
+    private long timeSince;
 
     final public static int TEXT_DISTANCE = 2;
 
     public TextBox(Rectangle hitBox){
         super(hitBox, Cursor.TEXT_CURSOR);
         text = "";
-    }
-
-    @Deprecated
-    public TextBox(Rectangle hitBox, Cursor overCursor){
-        super(hitBox, overCursor);
+        position = -1;
     }
 
     public TextBox(Rectangle hitBox, int sizeLimit){
@@ -39,7 +38,7 @@ public class TextBox extends Button{
     }
 
     public void removeChar(){
-        if (!text.isEmpty()){
+        if (position != 0){
             text = text.substring(0, position - 1) + text.substring(position, text.length());
             position--;
         }
@@ -61,14 +60,27 @@ public class TextBox extends Button{
         return text;
     }
 
+    public void disengage(){
+        position = -1;
+    }
+
     @Override
-    public TextBox runPress() {
+    public TextBox runPress(Point p) {
+        int assignedPosition = (int)((p.x - hitBox.x) / (hitBox.height * GraphicsUtility.HEIGHT_TO_CWIDTH) + 1.0 / 2);
+        if (assignedPosition > text.length()){
+            position = text.length();
+        }
+        else{
+            position = assignedPosition;
+        }
+        System.out.println((int)((p.x - hitBox.x) / (hitBox.height * GraphicsUtility.HEIGHT_TO_CWIDTH) + 1.0 / 2));
+
+        timeSince = Clock.systemUTC().millis();
         return this;
     }
 
     @Override
     public void runPress(BinaryTree tree) {
-        // TODO Auto-generated method stub
         
     }
 
@@ -79,5 +91,12 @@ public class TextBox extends Button{
 
         g.setColor(Color.BLACK);
         GraphicsUtility.drawString(g, text, hitBox.x, hitBox.y + hitBox.height - TEXT_DISTANCE / 2, hitBox.height - TEXT_DISTANCE);
+
+        if (position != -1){
+            double colorFactor = 255 * Math.abs(Math.cos((double)(Clock.systemUTC().millis() - timeSince) / 300));
+            g.setColor(new Color(0, 0, 0, (int)(colorFactor)));
+            int xPos = (int)(hitBox.x + position * hitBox.height * GraphicsUtility.HEIGHT_TO_CWIDTH);
+            g.drawLine(xPos, hitBox.y + TEXT_DISTANCE, xPos, hitBox.y + hitBox.height - TEXT_DISTANCE);
+        }
     }
 }

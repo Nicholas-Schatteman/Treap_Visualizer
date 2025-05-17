@@ -2,7 +2,6 @@ import java.awt.Rectangle;
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Point;
-import java.awt.image.BufferedImage;
 
 abstract public class Button {
     protected Rectangle hitBox;
@@ -61,7 +60,7 @@ abstract public class Button {
         return overCursor;
     }
 
-    abstract public Button runPress();
+    abstract public Button runPress(Point p);
 
     abstract public void runPress(BinaryTree tree);
 

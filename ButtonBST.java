@@ -21,18 +21,6 @@ public class ButtonBST {
         return null;
     }
 
-    public boolean pressSearch(Point p){
-        Button b = search(p);
-
-        if (b == null){
-            return false;
-        }
-        else{
-            b.runPress();
-            return true;
-        }
-    }
-
     public void insert(Button b){
         insert(new ButtonBSTNode(b));
     }

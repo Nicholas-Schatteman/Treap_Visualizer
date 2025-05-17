@@ -1,10 +1,14 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.time.Clock;
 
 public class BinaryTree {
     private BinaryTreeNode head;
     private BinaryTreeNode current;
     private BinaryTreeLL highlightedNodes;
+    private long timeSince;
+
+    final public double TIME_TO_MOVE = 1;
 
     private Treap tree;
 
@@ -62,6 +66,7 @@ public class BinaryTree {
     }
 
     public void nextOperation(){
+        timeSince = Clock.systemUTC().millis();
         int operation = tree.getOperations().next();
 
         switch (operation) {//TODO: Finish operations
@@ -154,6 +159,20 @@ public class BinaryTree {
         while (highlightedNodes.hasNext()){
             highlightedNodes.next().setColor(Color.RED);
         }
+    }
+
+    public double timeFunction(){
+        double time = (double)(Clock.systemUTC().millis() - timeSince) / TIME_TO_MOVE;
+        if (time < 1){
+            return time;
+        }
+        else{
+            return 1;
+        }
+    }
+
+    public boolean isMoving(){
+        return timeFunction() != 1;
     }
 
     public void updatePosition(){
