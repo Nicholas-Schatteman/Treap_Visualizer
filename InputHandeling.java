@@ -3,6 +3,8 @@ import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -11,6 +13,7 @@ import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.CharacterCodingException;
 import java.util.Random;
 import java.util.Timer;
 
@@ -25,6 +28,8 @@ public class InputHandeling extends JPanel{
     private Point previousMousePoint;
     private ButtonBST buttons;
     private Button currentButton;
+    private TextBox currentTextBox;
+    private int currentKeyCode;
     private Timer timer = new Timer();
 
     final public double ZOOM_FACTOR = 2;
@@ -32,6 +37,7 @@ public class InputHandeling extends JPanel{
     final public double MIN_ZOOM = 0.01;
     final public int UI_HEIGHT = 100;
 
+    final public int OPERATION_SEPERATION = 50;
     final public int OPERATION_BUTTON_WIDTH = 30;
     final public int NEXT_BUTTON_X = 500;
     final public int NEXT_BUTTON_Y = 500;
@@ -40,7 +46,40 @@ public class InputHandeling extends JPanel{
 
     public InputHandeling(){
 
-        //addKeyListener(null);
+        addKeyListener(new KeyListener() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                currentKeyCode = e.getKeyCode();
+                if (currentTextBox != null){
+                    if (currentKeyCode == KeyEvent.VK_BACK_SPACE){
+                        currentTextBox.removeChar();
+                    }
+                    else if (currentKeyCode == KeyEvent.VK_LEFT){
+                        currentTextBox.moveLeft();
+                    }
+                    else if (currentKeyCode == KeyEvent.VK_RIGHT){
+                        currentTextBox.moveRight();
+                    }
+                    else if (Character.isDigit(currentKeyCode)){
+                        currentTextBox.addChar(e.getKeyChar());
+                    }
+                    repaint();
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void keyTyped(KeyEvent e) {
+                // TODO Auto-generated method stub
+
+            }
+        });
+
         addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -62,6 +101,7 @@ public class InputHandeling extends JPanel{
             @Override
             public void mouseReleased(MouseEvent e) {
                 if (currentButton == buttons.search(e.getPoint()) && currentButton != null){
+                    currentTextBox = (TextBox)currentButton.runPress();
                     currentButton.runPress(head);
                     if (head != null && head.hasCurrent()){
                         //System.out.println(head.getCurrentValue());
@@ -141,9 +181,10 @@ public class InputHandeling extends JPanel{
             File imageFile = new File("C:\\Users\\nicho\\Desktop\\Executables\\Java Executables\\Extra\\Treap Visual\\Images\\Forward.png");
             BufferedImage image = ImageIO.read(imageFile);
         
-            Button button = new Button(new Rectangle(NEXT_BUTTON_X, NEXT_BUTTON_Y, OPERATION_BUTTON_WIDTH, OPERATION_BUTTON_WIDTH), Cursor.HAND_CURSOR) {
+            ImageButton button = new ImageButton(new Rectangle(NEXT_BUTTON_X, NEXT_BUTTON_Y, OPERATION_BUTTON_WIDTH, OPERATION_BUTTON_WIDTH), Cursor.HAND_CURSOR) {
                 @Override
-                public void runPress() {
+                public Button runPress() {
+                    return null;
                 }
 
                 @Override
@@ -161,9 +202,10 @@ public class InputHandeling extends JPanel{
             imageFile = new File("C:\\Users\\nicho\\Desktop\\Executables\\Java Executables\\Extra\\Treap Visual\\Images\\Back.png");
             image = ImageIO.read(imageFile);
 
-            button = new Button(new Rectangle(NEXT_BUTTON_X - 60, NEXT_BUTTON_Y, OPERATION_BUTTON_WIDTH, OPERATION_BUTTON_WIDTH), Cursor.HAND_CURSOR) {
+            button = new ImageButton(new Rectangle(NEXT_BUTTON_X - OPERATION_SEPERATION, NEXT_BUTTON_Y, OPERATION_BUTTON_WIDTH, OPERATION_BUTTON_WIDTH), Cursor.HAND_CURSOR) {
                 @Override
-                public void runPress() {
+                public Button runPress() {
+                    return null;
                 }
 
                 @Override
@@ -182,6 +224,10 @@ public class InputHandeling extends JPanel{
             button.setVisable(true);
             button.setImage(image);
             buttons.insert(button);
+
+            TextBox textBox = new TextBox(new Rectangle(100, 100, 100, 20), 3);
+            textBox.setVisable(true);
+            buttons.insert(textBox);
         }catch (IOException e){
             
         }

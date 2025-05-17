@@ -9,8 +9,9 @@ public class TreapVisual{
         window.setBounds(-10, 0, 0, 0);
         window.setSize(tk.getScreenSize());
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        window.add(new InputHandeling());
+        InputHandeling panel = new InputHandeling();
+        panel.setFocusable(true);
+        window.add(panel);
 
         window.setVisible(true);
     }

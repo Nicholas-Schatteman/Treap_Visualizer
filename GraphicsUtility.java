@@ -4,9 +4,13 @@ public class GraphicsUtility {
     final public static double HEIGHT_TO_SIZE = 1.3913;
     final public static double HEIGHT_TO_CWIDTH = 0.7739;
 
+    public static void drawString(Graphics g, String data, double x, double y, double height){
+        g.setFont(g.getFont().deriveFont((float)(height * HEIGHT_TO_SIZE)));
+        g.drawString(data, (int)(x), (int)(y));
+    }
+
     public static void drawString(Graphics g, String data, double x, double y, double height, double screenX, double screenY, double zoomFactor){
-        g.setFont(g.getFont().deriveFont((float)(height * zoomFactor * HEIGHT_TO_SIZE)));
-        g.drawString(data, (int)(x * zoomFactor - screenX), (int)(y * zoomFactor - screenY));
+        drawString(g, data, x * zoomFactor - screenX, y * zoomFactor - screenY, height * zoomFactor);
     }
 
     public static void drawStringXCentered(Graphics g, String data, double x, double y, double height, double screenX, double screenY, double zoomFactor){

@@ -5,10 +5,9 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 abstract public class Button {
-    private BufferedImage image;
-    private Rectangle hitBox;
+    protected Rectangle hitBox;
     private Cursor overCursor;
-    private boolean isVisable;
+    protected boolean isVisable;
 
     public Button(Rectangle hitBox, Cursor overCursor){
         this.hitBox = hitBox;
@@ -37,13 +36,6 @@ abstract public class Button {
         return hitBox.x + hitBox.width / 2;
     }
 
-    public void draw(Graphics g){
-        g.drawImage(image, hitBox.x, hitBox.y, hitBox.width, hitBox.height, null);
-    }
-
-    public void setImage(BufferedImage image) {
-        this.image = image;
-    }
 
     public void setCursor(Cursor c){
         overCursor = c;
@@ -55,10 +47,6 @@ abstract public class Button {
 
     public void setVisable(boolean isVisable) {
         this.isVisable = isVisable;
-    }
-
-    public BufferedImage getImage() {
-        return image;
     }
 
     public Cursor getCursor(){
@@ -73,7 +61,9 @@ abstract public class Button {
         return overCursor;
     }
 
-    abstract public void runPress();
+    abstract public Button runPress();
 
     abstract public void runPress(BinaryTree tree);
+
+    abstract public void draw(Graphics g);
 }
