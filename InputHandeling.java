@@ -196,7 +196,7 @@ public class InputHandeling extends JPanel{
 
     private void addButtons(){
         try{
-            File imageFile = new File("C:\\Users\\nicho\\Desktop\\Executables\\Java Executables\\Extra\\Treap Visual\\Images\\Forward.png");
+            File imageFile = new File("Images\\Forward.png");
             BufferedImage image = ImageIO.read(imageFile);
         
             ImageButton button = new ImageButton(new Rectangle(NEXT_BUTTON_X, NEXT_BUTTON_Y, OPERATION_BUTTON_WIDTH, OPERATION_BUTTON_WIDTH), Cursor.HAND_CURSOR) {
@@ -217,7 +217,7 @@ public class InputHandeling extends JPanel{
             button.setImage(image);
             buttons.insert(button);
 
-            imageFile = new File("C:\\Users\\nicho\\Desktop\\Executables\\Java Executables\\Extra\\Treap Visual\\Images\\Back.png");
+            imageFile = new File("Images\\Back.png");
             image = ImageIO.read(imageFile);
 
             button = new ImageButton(new Rectangle(NEXT_BUTTON_X - OPERATION_SEPERATION, NEXT_BUTTON_Y, OPERATION_BUTTON_WIDTH, OPERATION_BUTTON_WIDTH), Cursor.HAND_CURSOR) {
