@@ -5,6 +5,7 @@ import java.awt.Point;
 
 abstract public class Button {
     protected Rectangle hitBox;
+    protected Rectangle border;
     private Cursor overCursor;
     protected boolean isVisable;
 
@@ -25,7 +26,8 @@ abstract public class Button {
         return hitBox.contains(x, y);
     }
 
-    public void update(Graphics g){
+    public void update(Graphics g, Rectangle border){
+        setBorder(border);
         if (isVisable){
             draw(g);
         }
@@ -35,6 +37,9 @@ abstract public class Button {
         return hitBox.x + hitBox.width / 2;
     }
 
+    public void setBorder(Rectangle border) {
+        this.border = border;
+    }
 
     public void setCursor(Cursor c){
         overCursor = c;

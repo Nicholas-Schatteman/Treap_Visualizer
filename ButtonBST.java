@@ -1,5 +1,6 @@
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
 
 public class ButtonBST {
     ButtonBSTNode head;
@@ -34,7 +35,7 @@ public class ButtonBST {
         }
     }
 
-    public void update(Graphics g){
-        head.update(g);
+    public void update(Graphics g, Rectangle border){
+        head.update(g, border);
     }
 }

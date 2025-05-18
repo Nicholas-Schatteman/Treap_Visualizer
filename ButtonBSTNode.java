@@ -1,4 +1,5 @@
 import java.awt.Graphics;
+import java.awt.Rectangle;
 
 public class ButtonBSTNode {
     private ButtonBSTNode left;
@@ -55,13 +56,13 @@ public class ButtonBSTNode {
         }
     }
 
-    public void update(Graphics g){
+    public void update(Graphics g, Rectangle border){
         if (left != null){
-            left.update(g);
+            left.update(g, border);
         }
-        this.button.update(g);
+        this.button.update(g, border);
         if (right != null){
-            right.update(g);
+            right.update(g, border);
         }
     }
 }

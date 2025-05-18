@@ -40,13 +40,12 @@ public class InputHandeling extends JPanel{
 
     final public int OPERATION_SEPERATION = 50;
     final public int OPERATION_BUTTON_WIDTH = 30;
-    final public int NEXT_BUTTON_X = 500;
-    final public int NEXT_BUTTON_Y = 500;
+    final public int NEXT_BUTTON_X = 100;
+    final public int NEXT_BUTTON_Y = 65;
     
 
 
     public InputHandeling(){
-
 
         addKeyListener(new KeyListener() {
             @Override
@@ -220,7 +219,7 @@ public class InputHandeling extends JPanel{
             imageFile = new File("Images\\Back.png");
             image = ImageIO.read(imageFile);
 
-            button = new ImageButton(new Rectangle(NEXT_BUTTON_X - OPERATION_SEPERATION, NEXT_BUTTON_Y, OPERATION_BUTTON_WIDTH, OPERATION_BUTTON_WIDTH), Cursor.HAND_CURSOR) {
+            button = new ImageButton(new Rectangle(NEXT_BUTTON_X + OPERATION_SEPERATION, NEXT_BUTTON_Y, OPERATION_BUTTON_WIDTH, OPERATION_BUTTON_WIDTH), Cursor.HAND_CURSOR) {
                 @Override
                 public Button runPress(Point p) {
                     return null;
@@ -303,7 +302,7 @@ public class InputHandeling extends JPanel{
 
         g.setColor(Color.LIGHT_GRAY);
         g.fillRect(getBounds().x, getBounds().height - UI_HEIGHT, getBounds().width, UI_HEIGHT);
-        buttons.update(g);
+        buttons.update(g, getBounds());
 
         
     }

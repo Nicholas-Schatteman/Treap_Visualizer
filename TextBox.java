@@ -73,7 +73,6 @@ public class TextBox extends Button{
         else{
             position = assignedPosition;
         }
-        System.out.println((int)((p.x - hitBox.x) / (hitBox.height * GraphicsUtility.HEIGHT_TO_CWIDTH) + 1.0 / 2));
 
         timeSince = Clock.systemUTC().millis();
         return this;
