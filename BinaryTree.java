@@ -66,7 +66,6 @@ public class BinaryTree {
     }
 
     public void nextOperation(){
-        timeSince = Clock.systemUTC().millis();
         int operation = tree.getOperations().next();
 
         switch (operation) {//TODO: Finish operations
@@ -102,23 +101,21 @@ public class BinaryTree {
                 break;
 
             case OperationLL.INSERT_LEFT:
+                updateStartPosition();
                 resetTreeNodeLL();
                 current.insertNodeLeft(tree.getNodeOperations().next().duplicate());
                 highlightedNodes.insert(current.getLeft());
-                head.updatePosition();
                 break;
 
             case OperationLL.INSERT_RIGHT:
+                updateStartPosition();
                 resetTreeNodeLL();
                 current.insertNodeRight(tree.getNodeOperations().next().duplicate());
                 highlightedNodes.insert(current.getRight());
-                head.updatePosition();
                 break;
 
             case OperationLL.ROTATE_LEFT:
-                //highlightedNodes.insert(current);
-                //highlightedNodes.insert(current.getLeft());
-                //highlightedNodes.insert(current.getRight());
+                updateStartPosition();
                 current.rotateLeft();
                 current = current.getParent();
                 if (current.getParent() == null){
@@ -127,10 +124,10 @@ public class BinaryTree {
                 else{
                     current = current.getParent();
                 }
-                head.updatePosition();
                 break;
 
             case OperationLL.ROTATE_RIGHT:
+                updateStartPosition();
                 current.rotateRight();
                 current = current.getParent();
                 if (current.getParent() == null){
@@ -139,7 +136,6 @@ public class BinaryTree {
                 else{
                     current = current.getParent();
                 }
-                head.updatePosition();
                 break;
         
             case OperationLL.VALIDATE_PRIORITY:
@@ -162,7 +158,7 @@ public class BinaryTree {
     }
 
     public double timeFunction(){
-        double time = (double)(Clock.systemUTC().millis() - timeSince) / TIME_TO_MOVE;
+        double time = (double)(Clock.systemUTC().millis() - timeSince) / (1000 * TIME_TO_MOVE);
         if (time < 1){
             return time;
         }
@@ -175,9 +171,18 @@ public class BinaryTree {
         return timeFunction() != 1;
     }
 
+    public void updateStartPosition(){
+        if (head != null){
+            head.startX = 0;
+            head.startY = 0;
+            head.updateStartPosition();
+            timeSince = Clock.systemUTC().millis();
+        }
+    }
+
     public void updatePosition(){
         if (head != null){
-            head.updatePosition();
+            head.updatePosition(timeFunction());
         }
     }
 

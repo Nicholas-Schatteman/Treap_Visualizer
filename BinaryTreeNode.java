@@ -165,36 +165,76 @@ public class BinaryTreeNode {
         return x0 * (1 - time) + x1 * time;
     }
 
-    public void updatePosition(){
+    public void updateStartPosition(){
         if (left != null && right != null){
-            int newLeftX = (int)(x - NODE_WIDTH_SEPERATION * Math.pow(2, Math.max(left.getHeight(), right.getHeight())));
-            int newLeftY = (int)(y + NODE_HEIGHT_SEPERATION);
-            int newRightX = (int)(x + NODE_WIDTH_SEPERATION * Math.pow(2, Math.max(left.getHeight(), right.getHeight())));
-            int newRightY = (int)(y + NODE_HEIGHT_SEPERATION);
+            int newLeftX = (int)(startX - NODE_WIDTH_SEPERATION * Math.pow(2, Math.max(left.getHeight(), right.getHeight())));
+            int newLeftY = (int)(startY + NODE_HEIGHT_SEPERATION);
+            int newRightX = (int)(startX + NODE_WIDTH_SEPERATION * Math.pow(2, Math.max(left.getHeight(), right.getHeight())));
+            int newRightY = (int)(startY + NODE_HEIGHT_SEPERATION);
 
-            left.x = newLeftX;
-            left.y = newLeftY;
-            left.updatePosition();
+            left.startX = newLeftX;
+            left.startY = newLeftY;
+            left.updateStartPosition();
 
-            right.x = newRightX;
-            right.y = newRightY;
-            right.updatePosition();
+            right.startX = newRightX;
+            right.startY = newRightY;
+            right.updateStartPosition();
         }
         else if (left != null){
-            int newLeftX = (int)(x - NODE_WIDTH_SEPERATION * Math.pow(2, left.getHeight()));
-            int newLeftY = (int)(y + NODE_HEIGHT_SEPERATION);
+            int newLeftX = (int)(startX - NODE_WIDTH_SEPERATION * Math.pow(2, left.getHeight()));
+            int newLeftY = (int)(startY + NODE_HEIGHT_SEPERATION);
 
-            left.x = newLeftX;
-            left.y = newLeftY;
-            left.updatePosition();
+            left.startX = newLeftX;
+            left.startY = newLeftY;
+            left.updateStartPosition();
         }
         else if (right != null){
-            int newRightX = (int)(x + NODE_WIDTH_SEPERATION * Math.pow(2, right.getHeight()));
-            int newRightY = (int)(y + NODE_HEIGHT_SEPERATION);
+            int newRightX = (int)(startX + NODE_WIDTH_SEPERATION * Math.pow(2, right.getHeight()));
+            int newRightY = (int)(startY + NODE_HEIGHT_SEPERATION);
 
-            right.x = newRightX;
-            right.y = newRightY;
-            right.updatePosition();
+            right.startX = newRightX;
+            right.startY = newRightY;
+            right.updateStartPosition();
+        }
+    }
+
+    public void updatePosition(double time){
+        x = (int)transitionFunction(startX, 0, time);
+        y = (int)transitionFunction(startY, 0, time);
+
+        subUpdatePosition(time);
+    }
+
+    public void subUpdatePosition(double time){
+        if (left != null && right != null){
+            double newLeftX = x - NODE_WIDTH_SEPERATION * Math.pow(2, Math.max(left.getHeight(), right.getHeight()));
+            double newLeftY = y + NODE_HEIGHT_SEPERATION;
+            double newRightX = x + NODE_WIDTH_SEPERATION * Math.pow(2, Math.max(left.getHeight(), right.getHeight()));
+            double newRightY = y + NODE_HEIGHT_SEPERATION;
+
+            left.x = (int)transitionFunction(left.startX, newLeftX, time);
+            left.y = (int)transitionFunction(left.startY, newLeftY, time);
+            left.subUpdatePosition(time);
+
+            right.x = (int)transitionFunction(right.startX, newRightX, time);
+            right.y = (int)transitionFunction(right.startY, newRightY, time);
+            right.subUpdatePosition(time);
+        }
+        else if (left != null){
+            double newLeftX = x - NODE_WIDTH_SEPERATION * Math.pow(2, left.getHeight());
+            double newLeftY = y + NODE_HEIGHT_SEPERATION;
+
+            left.x = (int)transitionFunction(left.startX, newLeftX, time);
+            left.y = (int)transitionFunction(left.startY, newLeftY, time);
+            left.subUpdatePosition(time);
+        }
+        else if (right != null){
+            double newRightX = x + NODE_WIDTH_SEPERATION * Math.pow(2, right.getHeight());
+            double newRightY = y + NODE_HEIGHT_SEPERATION;
+
+            right.x = (int)transitionFunction(right.startX, newRightX, time);
+            right.y = (int)transitionFunction(right.startY, newRightY, time);
+            right.subUpdatePosition(time);
         }
     }
 

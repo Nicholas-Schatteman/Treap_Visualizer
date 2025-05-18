@@ -177,7 +177,7 @@ public class InputHandeling extends JPanel{
         head = new BinaryTree(false);
         int x1;
         int x2;
-        for (int i = 0; i < r.nextInt(4) + 1; i++){
+        for (int i = 0; i < r.nextInt(2) + 8; i++){
             x1 = r.nextInt(20);
             x2 = r.nextInt(20);
             //System.out.println(x1 + ", " + x2);
