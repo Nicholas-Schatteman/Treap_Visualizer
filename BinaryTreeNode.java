@@ -162,7 +162,16 @@ public class BinaryTreeNode {
     }
 
     private double transitionFunction(double x0, double x1, double time){
-        return x0 * (1 - time) + x1 * time;
+        return x0 * (1 - timeFunction(time)) + x1 * timeFunction(time);
+    }
+
+    private double timeFunction(double time){
+        if (time < 0.5){
+            return 2 * Math.pow(time, 2);
+        }
+        else{
+            return 4 * time - 2 * Math.pow(time, 2) - 1;
+        }
     }
 
     public void updateStartPosition(){

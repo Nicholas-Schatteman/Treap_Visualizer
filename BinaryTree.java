@@ -8,7 +8,7 @@ public class BinaryTree {
     private BinaryTreeLL highlightedNodes;
     private long timeSince;
 
-    final public double TIME_TO_MOVE = 1;
+    final public double TIME_TO_MOVE = 600;
 
     private Treap tree;
 
@@ -158,7 +158,7 @@ public class BinaryTree {
     }
 
     public double timeFunction(){
-        double time = (double)(Clock.systemUTC().millis() - timeSince) / (1000 * TIME_TO_MOVE);
+        double time = (double)(Clock.systemUTC().millis() - timeSince) / TIME_TO_MOVE;
         if (time < 1){
             return time;
         }
