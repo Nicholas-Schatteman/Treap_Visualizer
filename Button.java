@@ -7,11 +7,26 @@ abstract public class Button {
     protected Rectangle hitBox;
     protected Rectangle border;
     private Cursor overCursor;
+    private int relativeCorner;
     protected boolean isVisable;
 
-    public Button(Rectangle hitBox, Cursor overCursor){
+    final public static int NW = 0;
+    final public static int NE = 1;
+    final public static int SW = 2;
+    final public static int SE = 3;
+
+    public Button(Rectangle hitBox, Cursor overCursor, int orientation){
         this.hitBox = hitBox;
         this.overCursor = overCursor;
+        relativeCorner = orientation;
+    }
+
+    public Button(Rectangle hitBox, Cursor overCursor){
+        this(hitBox, overCursor, 0);
+    }
+
+    public Button(Rectangle hitBox, int cursorType, int orientation){
+        this(hitBox, new Cursor(cursorType),orientation);
     }
 
     public Button(Rectangle hitBox, int cursorType){
@@ -23,7 +38,36 @@ abstract public class Button {
     }
 
     public boolean isOver(int x, int y){
-        return hitBox.contains(x, y);
+        double xPos = -1;
+        double yPos = -1;
+        
+        switch (relativeCorner) {
+            case NW:
+                xPos = x - hitBox.x;
+                yPos = y - hitBox.y;
+                break;
+        
+            case NE:
+                xPos = x + hitBox.x - border.getWidth();
+                yPos = y - hitBox.y;
+                break;
+
+            case SW:
+                xPos = x - hitBox.x;
+                yPos = y + hitBox.y - border.getHeight();
+                break;
+
+
+            case SE:
+                xPos = x + hitBox.x - border.getWidth();
+                yPos = y + hitBox.y - border.getHeight();
+                break;
+
+            default:
+                break;
+        }
+
+        return 0 <= xPos && xPos <= hitBox.getWidth() && 0 <= yPos && yPos <= hitBox.getHeight();
     }
 
     public void update(Graphics g, Rectangle border){
@@ -64,6 +108,8 @@ abstract public class Button {
     public Cursor getOverCursor() {
         return overCursor;
     }
+
+    abstract public void offPress();
 
     abstract public Button runPress(Point p);
 

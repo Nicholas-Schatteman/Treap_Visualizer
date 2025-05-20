@@ -28,6 +28,7 @@ public class InputHandeling extends JPanel{
     private double screenY;
     private Point previousMousePoint;
     private ButtonBST buttons;
+    private Button previousButton;
     private Button currentButton;
     private TextBox currentTextBox;
     private int currentKeyCode;
@@ -35,7 +36,7 @@ public class InputHandeling extends JPanel{
 
     final public double ZOOM_FACTOR = 2;
     final public int SCREEN_BOUNDS = 100000;
-    final public double MIN_ZOOM = 0.01;
+    final public double MIN_ZOOM = 0.3;//Smaller values means it can zoom in more
     final public int UI_HEIGHT = 100;
 
     final public int OPERATION_SEPERATION = 50;
@@ -101,16 +102,14 @@ public class InputHandeling extends JPanel{
             }
             @Override
             public void mouseReleased(MouseEvent e) {
-                if (currentTextBox != null){
-                    currentTextBox.disengage();
+                if (previousButton != null){
+                    previousButton.offPress();
                 }
 
                 if (currentButton == buttons.search(e.getPoint()) && currentButton != null){
                     currentTextBox = (TextBox)currentButton.runPress(e.getPoint());
                     currentButton.runPress(head);
-                    if (head != null && head.hasCurrent()){
-                        //System.out.println(head.getCurrentValue());
-                    }
+                    previousButton = currentButton;
                 }
                 else{
                     currentTextBox = null;
@@ -143,18 +142,12 @@ public class InputHandeling extends JPanel{
         addMouseWheelListener(new MouseWheelListener() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
-                
-                //screenX += (e.getX() + screenX) * Math.pow(ZOOM_FACTOR, -e.getWheelRotation()) / zoomFactor - (e.getX() + screenX) / zoomFactor;
-                //screenY = (e.getY() + screenY) * Math.pow(ZOOM_FACTOR, -e.getWheelRotation()) / zoomFactor - e.getY();
+                if (zoomFactor < 1 / MIN_ZOOM || Math.pow(ZOOM_FACTOR, -e.getWheelRotation()) < 1){
+                    screenX = Math.pow(ZOOM_FACTOR, -e.getWheelRotation()) * (e.getX() + screenX) - e.getX();
+                    screenY = Math.pow(ZOOM_FACTOR, -e.getWheelRotation()) * (e.getY() + screenY) - e.getY();
 
-                screenX = Math.pow(ZOOM_FACTOR, -e.getWheelRotation()) * (e.getX() + screenX) - e.getX();
-                screenY = Math.pow(ZOOM_FACTOR, -e.getWheelRotation()) * (e.getY() + screenY) - e.getY();
-                
-                zoomFactor *= Math.pow(ZOOM_FACTOR, -e.getWheelRotation());
-                if (zoomFactor < MIN_ZOOM){
-                    zoomFactor = MIN_ZOOM;
+                    zoomFactor *= Math.pow(ZOOM_FACTOR, -e.getWheelRotation());
                 }
-                
 
                 boundScreen();
                 repaint();
@@ -179,15 +172,11 @@ public class InputHandeling extends JPanel{
         for (int i = 0; i < r.nextInt(2) + 8; i++){
             x1 = r.nextInt(20);
             x2 = r.nextInt(20);
-            //System.out.println(x1 + ", " + x2);
             head.insert(x1, x2);
         }
 
         buttons = new ButtonBST();
         addButtons();
-
-        //head = treapToBinaryTree(treap);
-        
 
         head.updatePosition();
         repaint();
@@ -199,6 +188,9 @@ public class InputHandeling extends JPanel{
             BufferedImage image = ImageIO.read(imageFile);
         
             ImageButton button = new ImageButton(new Rectangle(NEXT_BUTTON_X, NEXT_BUTTON_Y, OPERATION_BUTTON_WIDTH, OPERATION_BUTTON_WIDTH), Cursor.HAND_CURSOR) {
+                @Override
+                public void offPress() {}
+
                 @Override
                 public Button runPress(Point p) {
                     return null;
@@ -221,6 +213,9 @@ public class InputHandeling extends JPanel{
 
             button = new ImageButton(new Rectangle(NEXT_BUTTON_X + OPERATION_SEPERATION, NEXT_BUTTON_Y, OPERATION_BUTTON_WIDTH, OPERATION_BUTTON_WIDTH), Cursor.HAND_CURSOR) {
                 @Override
+                public void offPress() {}
+
+                @Override
                 public Button runPress(Point p) {
                     return null;
                 }
@@ -242,38 +237,27 @@ public class InputHandeling extends JPanel{
             button.setImage(image);
             buttons.insert(button);
 
-            TextBox textBox = new TextBox(new Rectangle(100, 100, 100, 20), 3);
-            textBox.setVisable(true);
-            buttons.insert(textBox);
+            TextBox textBox1 = new TextBox(new Rectangle(100, 100, 100, 20), 3);
+            textBox1.setVisable(true);
+            buttons.insert(textBox1);
 
-            textBox = new TextBox(new Rectangle(150, 150, 75, 15), 6);
-            textBox.setVisable(true);
-            buttons.insert(textBox);
+            TextBox textBox2 = new TextBox(new Rectangle(150, 150, 75, 15), 6);
+            textBox2.setVisable(true);
+            buttons.insert(textBox2);
+
+            SubmitTextButton submitionButton = new SubmitTextButton(new Rectangle(230, 100, 20, 20), textBox1, textBox2, "Insert") {
+                @Override
+                public void action(BinaryTree tree, int x, int y) {
+                    tree.insert(x, y);
+                }
+            };
+            submitionButton.setVisable(true);
+
+            buttons.insert(submitionButton);
         }catch (IOException e){
             
         }
     }
-
-    /*private BinaryTree treapToBinaryTree(Treap treap){
-        return new BinaryTree(treapNodeToBinaryTree(treap.getHead()));
-    }
-
-    private BinaryTreeNode treapNodeToBinaryTree(TreapNode treap){
-        BinaryTreeNode tree = new BinaryTreeNode(treap.priority, treap.value);
-
-        if (treap.getLeft() != null && treap.getRight() != null){
-            tree.insertNodeLeft(treapNodeToBinaryTree(treap.getLeft()));
-            tree.insertNodeRight(treapNodeToBinaryTree(treap.getRight()));
-        }
-        else if (treap.getLeft() != null){
-            tree.insertNodeLeft(treapNodeToBinaryTree(treap.getLeft()));
-        }
-        else if (treap.getRight() != null){
-            tree.insertNodeRight(treapNodeToBinaryTree(treap.getRight()));
-        }
-
-        return tree;
-    }*/
 
     private void boundScreen(){
         if (screenX < -SCREEN_BOUNDS * zoomFactor){

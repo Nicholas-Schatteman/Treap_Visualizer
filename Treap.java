@@ -1,7 +1,7 @@
 public class Treap {
     private TreapNode head;
-    private OperationLL operations;
-    private BinaryTreeLL nodeOperations;
+    private LinkedList<Integer> operations;
+    private LinkedList<BinaryTreeNode> nodeOperations;
     private boolean isMaxHeap;
 
     public Treap(){
@@ -10,19 +10,19 @@ public class Treap {
 
     public Treap(boolean isMaxHeap){
         this.isMaxHeap = isMaxHeap;
-        operations = new OperationLL();
-        nodeOperations = new BinaryTreeLL();
+        operations = new LinkedList<Integer>();
+        nodeOperations = new LinkedList<BinaryTreeNode>();
     }
 
     public TreapNode getHead(){
         return head;
     }
 
-    public OperationLL getOperations(){
+    public LinkedList<Integer> getOperations(){
         return operations;
     }
 
-    public BinaryTreeLL getNodeOperations() {
+    public LinkedList<BinaryTreeNode> getNodeOperations() {
         return nodeOperations;
     }
 

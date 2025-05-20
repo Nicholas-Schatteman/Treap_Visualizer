@@ -14,7 +14,7 @@ public class TextBox extends Button{
     final public static int TEXT_DISTANCE = 2;
 
     public TextBox(Rectangle hitBox){
-        super(hitBox, Cursor.TEXT_CURSOR);
+        super(hitBox, Cursor.TEXT_CURSOR, Button.SW);
         text = "";
         position = -1;
     }
@@ -56,12 +56,17 @@ public class TextBox extends Button{
         }
     }
 
+    public void clearText(){
+        text = "";
+    }
+
     public String getText() {
         return text;
     }
 
-    public void disengage(){
-        position = -1;
+    @Override
+    public boolean isOver(Point p) {
+        return isOver((int)p.getX(), (int)p.getY());
     }
 
     @Override
@@ -79,23 +84,30 @@ public class TextBox extends Button{
     }
 
     @Override
+    public void offPress() {
+        position = -1;
+    }
+
+    @Override
     public void runPress(BinaryTree tree) {
         
     }
 
     @Override
     public void draw(Graphics g) {
+        int yPos = (int)(border.getHeight() - hitBox.y);
+
         g.setColor(Color.GRAY);
-        g.drawRect(hitBox.x, hitBox.y, hitBox.width, hitBox.height);
+        g.drawRect(hitBox.x, yPos, hitBox.width, hitBox.height);
 
         g.setColor(Color.BLACK);
-        GraphicsUtility.drawString(g, text, hitBox.x, hitBox.y + hitBox.height - TEXT_DISTANCE / 2, hitBox.height - TEXT_DISTANCE);
+        GraphicsUtility.drawString(g, text, hitBox.x, yPos + hitBox.height - TEXT_DISTANCE / 2, hitBox.height - TEXT_DISTANCE);
 
         if (position != -1){
             double colorFactor = 255 * Math.abs(Math.cos((double)(Clock.systemUTC().millis() - timeSince) / 300));
             g.setColor(new Color(0, 0, 0, (int)(colorFactor)));
             int xPos = (int)(hitBox.x + position * hitBox.height * GraphicsUtility.HEIGHT_TO_CWIDTH);
-            g.drawLine(xPos, hitBox.y + TEXT_DISTANCE, xPos, hitBox.y + hitBox.height - TEXT_DISTANCE);
+            g.drawLine(xPos, yPos + TEXT_DISTANCE, xPos, yPos + hitBox.height - TEXT_DISTANCE);
         }
     }
 }

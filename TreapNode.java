@@ -11,11 +11,11 @@ public class TreapNode{
 
     }
 
-    public void insert(int priority, int value, OperationLL operations, boolean isMaxHeap){
+    public void insert(int priority, int value, LinkedList<Integer> operations, boolean isMaxHeap){
         insertNode(new TreapNode(priority, value), operations, isMaxHeap);
     }
 
-    public TreapNode insertNode(TreapNode tree, OperationLL operations, boolean isMaxHeap){
+    public TreapNode insertNode(TreapNode tree, LinkedList<Integer> operations, boolean isMaxHeap){
         TreapNode head = this;
 
         if (tree == null){}

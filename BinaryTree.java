@@ -5,7 +5,7 @@ import java.time.Clock;
 public class BinaryTree {
     private BinaryTreeNode head;
     private BinaryTreeNode current;
-    private BinaryTreeLL highlightedNodes;
+    private LinkedList<BinaryTreeNode> highlightedNodes;
     private long timeSince;
 
     final public double TIME_TO_MOVE = 600;
@@ -14,7 +14,7 @@ public class BinaryTree {
 
     public BinaryTree(boolean isMaxHeap){
         tree = new Treap(isMaxHeap);
-        highlightedNodes = new BinaryTreeLL();
+        highlightedNodes = new LinkedList<BinaryTreeNode>();
     }
 
     public void insert(int priority, int value){
@@ -62,7 +62,7 @@ public class BinaryTree {
         while (highlightedNodes.hasNext()){
             highlightedNodes.next().setColor(Color.BLACK);
         }
-        highlightedNodes = new BinaryTreeLL();
+        highlightedNodes = new LinkedList<BinaryTreeNode>();
     }
 
     public void nextOperation(){
