@@ -65,11 +65,6 @@ public class TextBox extends Button{
     }
 
     @Override
-    public boolean isOver(Point p) {
-        return isOver((int)p.getX(), (int)p.getY());
-    }
-
-    @Override
     public TextBox runPress(Point p) {
         int assignedPosition = (int)((p.x - hitBox.x) / (hitBox.height * GraphicsUtility.HEIGHT_TO_CWIDTH) + 1.0 / 2);
         if (assignedPosition > text.length()){
@@ -94,20 +89,19 @@ public class TextBox extends Button{
     }
 
     @Override
-    public void draw(Graphics g) {
-        int yPos = (int)(border.getHeight() - hitBox.y);
+    public void draw(Graphics g, Rectangle placement) {
 
         g.setColor(Color.GRAY);
-        g.drawRect(hitBox.x, yPos, hitBox.width, hitBox.height);
+        g.drawRect(placement.x, placement.y, placement.width, placement.height);
 
         g.setColor(Color.BLACK);
-        GraphicsUtility.drawString(g, text, hitBox.x, yPos + hitBox.height - TEXT_DISTANCE / 2, hitBox.height - TEXT_DISTANCE);
+        GraphicsUtility.drawString(g, text, placement.x, placement.y - TEXT_DISTANCE / 2, placement.height - TEXT_DISTANCE);
 
         if (position != -1){
             double colorFactor = 255 * Math.abs(Math.cos((double)(Clock.systemUTC().millis() - timeSince) / 300));
             g.setColor(new Color(0, 0, 0, (int)(colorFactor)));
-            int xPos = (int)(hitBox.x + position * hitBox.height * GraphicsUtility.HEIGHT_TO_CWIDTH);
-            g.drawLine(xPos, yPos + TEXT_DISTANCE, xPos, yPos + hitBox.height - TEXT_DISTANCE);
+            int xPos = (int)(placement.x + position * placement.height * GraphicsUtility.HEIGHT_TO_CWIDTH);
+            g.drawLine(xPos, placement.y + TEXT_DISTANCE, xPos, placement.y + placement.height - TEXT_DISTANCE);
         }
     }
 }

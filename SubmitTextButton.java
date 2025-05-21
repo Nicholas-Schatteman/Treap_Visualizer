@@ -34,12 +34,12 @@ abstract public class SubmitTextButton extends Button{
     }
 
     @Override
-    public void draw(Graphics g) {
+    public void draw(Graphics g, Rectangle placement) {
         g.setColor(Color.BLACK);
-        g.fillRect(hitBox.x, hitBox.y, hitBox.width, hitBox.height);
+        g.fillRect(placement.x, placement.y, placement.width, placement.height);
 
         g.setColor(Color.RED);
-        GraphicsUtility.drawString(g, display, hitBox.x, hitBox.y, hitBox.height);
+        GraphicsUtility.drawString(g, display, placement.x, placement.y, placement.height);
     }
 
     abstract public void action(BinaryTree tree, int x, int y);

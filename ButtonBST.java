@@ -5,10 +5,10 @@ import java.awt.Rectangle;
 public class ButtonBST {
     ButtonBSTNode head;
 
-    public Button search(Point p){
+    public Button search(Point p, Rectangle border){
         ButtonBSTNode current = head;
         while (current != null){
-            if (current.getButton().isOver(p)){
+            if (current.getButton().isOver(p, border)){
                 return current.getButton();
             }
             else if (p.getX() < current.getButton().getCenterX()){

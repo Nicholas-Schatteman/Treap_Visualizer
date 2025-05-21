@@ -30,6 +30,7 @@ public class InputHandeling extends JPanel{
     private ButtonBST buttons;
     private Button previousButton;
     private Button currentButton;
+    private DropDownButton dropSideButton; //Unveils operation insertions when hovered over
     private TextBox currentTextBox;
     private int currentKeyCode;
     private Timer graphicsUpdate;
@@ -97,7 +98,7 @@ public class InputHandeling extends JPanel{
             }
             @Override
             public void mousePressed(MouseEvent e) {
-                currentButton = buttons.search(e.getPoint());
+                currentButton = buttons.search(e.getPoint(), getBounds());
                 previousMousePoint = e.getPoint();
             }
             @Override
@@ -106,7 +107,7 @@ public class InputHandeling extends JPanel{
                     previousButton.offPress();
                 }
 
-                if (currentButton == buttons.search(e.getPoint()) && currentButton != null){
+                if (currentButton == buttons.search(e.getPoint(), getBounds()) && currentButton != null){
                     currentTextBox = (TextBox)currentButton.runPress(e.getPoint());
                     currentButton.runPress(head);
                     previousButton = currentButton;
@@ -130,15 +131,25 @@ public class InputHandeling extends JPanel{
             }
             @Override
             public void mouseMoved(MouseEvent e) {
-                Button b = buttons.search(e.getPoint());
+                //Sets cursor if over button based on what button shape is specified
+                Button b = buttons.search(e.getPoint(), getBounds());
                 if (b == null){
                     setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 }
                 else{
                     setCursor(b.getCursor());
                 }
+
+                //If over drop side button unveil the buttons inside
+                if (dropSideButton.isOver(e.getPoint(), getBounds())){
+                    dropSideButton.runPress(e.getPoint());
+                }
+                else{
+                    dropSideButton.offPress();
+                }
             }
         });
+
         addMouseWheelListener(new MouseWheelListener() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
@@ -184,34 +195,10 @@ public class InputHandeling extends JPanel{
 
     private void addButtons(){
         try{
-            File imageFile = new File("Images\\Forward.png");
+            File imageFile = new File("Images\\Back.png");
             BufferedImage image = ImageIO.read(imageFile);
-        
-            ImageButton button = new ImageButton(new Rectangle(NEXT_BUTTON_X, NEXT_BUTTON_Y, OPERATION_BUTTON_WIDTH, OPERATION_BUTTON_WIDTH), Cursor.HAND_CURSOR) {
-                @Override
-                public void offPress() {}
 
-                @Override
-                public Button runPress(Point p) {
-                    return null;
-                }
-
-                @Override
-                public void runPress(BinaryTree tree) {
-                    if (tree.hasNext()){
-                        tree.nextOperation();
-                        repaint();
-                    }
-                }
-            };
-            button.setVisable(true);
-            button.setImage(image);
-            buttons.insert(button);
-
-            imageFile = new File("Images\\Back.png");
-            image = ImageIO.read(imageFile);
-
-            button = new ImageButton(new Rectangle(NEXT_BUTTON_X + OPERATION_SEPERATION, NEXT_BUTTON_Y, OPERATION_BUTTON_WIDTH, OPERATION_BUTTON_WIDTH), Cursor.HAND_CURSOR) {
+            ImageButton button = new ImageButton(new Rectangle(NEXT_BUTTON_X + OPERATION_SEPERATION, NEXT_BUTTON_Y, OPERATION_BUTTON_WIDTH, OPERATION_BUTTON_WIDTH), Cursor.HAND_CURSOR) {
                 @Override
                 public void offPress() {}
 
@@ -236,6 +223,38 @@ public class InputHandeling extends JPanel{
             button.setVisable(true);
             button.setImage(image);
             buttons.insert(button);
+
+            imageFile = new File("Images\\Forward.png");
+            image = ImageIO.read(imageFile);
+        
+            button = new ImageButton(new Rectangle(NEXT_BUTTON_X+100, NEXT_BUTTON_Y+100, OPERATION_BUTTON_WIDTH, OPERATION_BUTTON_WIDTH), Cursor.HAND_CURSOR) {
+                @Override
+                public void offPress() {}
+
+                @Override
+                public Button runPress(Point p) {
+                    return null;
+                }
+
+                @Override
+                public void runPress(BinaryTree tree) {
+                    if (tree.hasNext()){
+                        tree.nextOperation();
+                        repaint();
+                    }
+                }
+            };
+            button.setVisable(true);
+            button.setImage(image);
+            buttons.insert(button);
+
+            dropSideButton = new DropDownButton(new Rectangle(50, 100, 100, 100), image) {
+                @Override
+                public void draw(Graphics g, Rectangle placement) {
+                    g.setColor(Color.BLACK);
+                    g.drawRect(placement.x, placement.y, placement.width, placement.height);
+                }
+            };
 
             TextBox textBox1 = new TextBox(new Rectangle(100, 100, 100, 20), 3);
             textBox1.setVisable(true);

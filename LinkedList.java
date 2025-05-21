@@ -24,7 +24,10 @@ public class LinkedList<T> {
         }
         else{
             last.setNext(newNode);
-            isFinished = false;
+            if (isFinished){
+                isFinished = false;
+                current = current.getNext();
+            }
             while (last.getNext() != null){
                 last = last.getNext();
             }

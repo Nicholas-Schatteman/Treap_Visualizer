@@ -60,7 +60,7 @@ public class ButtonBSTNode {
         if (left != null){
             left.update(g, border);
         }
-        this.button.update(g, border);
+        button.update(g, border);
         if (right != null){
             right.update(g, border);
         }

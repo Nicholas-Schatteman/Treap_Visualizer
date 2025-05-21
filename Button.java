@@ -5,7 +5,6 @@ import java.awt.Point;
 
 abstract public class Button {
     protected Rectangle hitBox;
-    protected Rectangle border;
     private Cursor overCursor;
     private int relativeCorner;
     protected boolean isVisable;
@@ -33,11 +32,12 @@ abstract public class Button {
         this(hitBox, new Cursor(cursorType));
     }
 
-    public boolean isOver(Point p){
-        return hitBox.contains(p);
+    public boolean isOver(Point p, Rectangle border){
+        //return hitBox.contains(p.x, p.y);
+        return isOver(p.x, p.y, border);
     }
 
-    public boolean isOver(int x, int y){
+    public boolean isOver(int x, int y, Rectangle border){
         double xPos = -1;
         double yPos = -1;
         
@@ -48,41 +48,60 @@ abstract public class Button {
                 break;
         
             case NE:
-                xPos = x + hitBox.x - border.getWidth();
+                xPos = x + hitBox.x - border.width;
                 yPos = y - hitBox.y;
                 break;
 
             case SW:
                 xPos = x - hitBox.x;
-                yPos = y + hitBox.y - border.getHeight();
+                yPos = y + hitBox.y - border.height;
                 break;
 
 
             case SE:
-                xPos = x + hitBox.x - border.getWidth();
-                yPos = y + hitBox.y - border.getHeight();
+                xPos = x + hitBox.x - border.width;
+                yPos = y + hitBox.y - border.height;
                 break;
 
             default:
                 break;
         }
 
-        return 0 <= xPos && xPos <= hitBox.getWidth() && 0 <= yPos && yPos <= hitBox.getHeight();
+        return 0 <= xPos && xPos <= hitBox.width && 0 <= yPos && yPos <= hitBox.height;
     }
 
     public void update(Graphics g, Rectangle border){
-        setBorder(border);
         if (isVisable){
-            draw(g);
+            Rectangle placement;
+            switch (relativeCorner) {
+                case NW:
+                    placement = new Rectangle(hitBox.x, hitBox.y, hitBox.width, hitBox.height);
+                    draw(g, placement);
+                    break;
+            
+                case NE:
+                    placement = new Rectangle(border.width - hitBox.x, hitBox.y, hitBox.width, hitBox.height);
+                    draw(g, placement);
+                    break;
+
+                case SW:
+                    placement = new Rectangle(hitBox.x, border.height - hitBox.y, hitBox.width, hitBox.height);
+                    draw(g, placement);
+                    break;
+
+                case SE:
+                    placement = new Rectangle(border.width - hitBox.x, border.height - hitBox.y, hitBox.width, hitBox.height);
+                    draw(g, placement);
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
 
     public int getCenterX(){
         return hitBox.x + hitBox.width / 2;
-    }
-
-    public void setBorder(Rectangle border) {
-        this.border = border;
     }
 
     public void setCursor(Cursor c){
@@ -115,5 +134,5 @@ abstract public class Button {
 
     abstract public void runPress(BinaryTree tree);
 
-    abstract public void draw(Graphics g);
+    abstract public void draw(Graphics g, Rectangle placement);
 }
