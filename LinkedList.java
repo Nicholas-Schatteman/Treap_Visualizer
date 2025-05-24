@@ -1,5 +1,5 @@
 
-
+//TODO: Change names to more general
 public class LinkedList<T> {
     private LinkedListNode<T> first;
     private LinkedListNode<T> start;
@@ -17,7 +17,7 @@ public class LinkedList<T> {
     }
 
     public void insertNode(LinkedListNode<T> newNode){
-        if (first == null){
+        if (isEmpty()){
             first = newNode;
             current = newNode;
             last = newNode;
@@ -32,6 +32,30 @@ public class LinkedList<T> {
                 last = last.getNext();
             }
         }    
+    }
+
+    public void insertValues(LinkedList<T> list){
+        if (!list.isEmpty()){
+            if (list.isAtStart()){
+                while (list.hasNext()) {
+                    insert(list.next());
+                }
+                list.restart();
+            }
+            else{
+                list.setSearchCurrent();
+                list.restart();
+
+                while (list.hasNext()) {
+                    insert(list.next());
+                }
+                list.restart();
+
+                while (!list.isAtSearch()) {
+                    list.next();
+                }
+            }
+        }
     }
 
     public T next(){
@@ -50,7 +74,7 @@ public class LinkedList<T> {
     }
 
     public boolean hasNext(){
-        if (first == null){
+        if (isEmpty()){
             return false;
         }
         else{
@@ -62,8 +86,16 @@ public class LinkedList<T> {
         return !(first == current);
     }
 
+    public boolean isEmpty(){
+        return first == null;
+    }
+
     public boolean isAtStart(){
         return current == start;
+    }
+
+    public boolean isAtSearch(){
+        return current == searchNode;
     }
 
     public boolean isBeforeSearch(){

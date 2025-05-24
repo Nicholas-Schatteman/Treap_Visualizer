@@ -248,13 +248,14 @@ public class InputHandeling extends JPanel{
             button.setImage(image);
             buttons.insert(button);
 
-            dropSideButton = new DropDownButton(new Rectangle(50, 100, 100, 100), image) {
+            dropSideButton = new DropDownButton(new Rectangle(100, 500, 50, 100), new Rectangle(50, 100, 100, 100), image) {
                 @Override
                 public void draw(Graphics g, Rectangle placement) {
                     g.setColor(Color.BLACK);
                     g.drawRect(placement.x, placement.y, placement.width, placement.height);
                 }
             };
+            buttons.insert(dropSideButton);
 
             TextBox textBox1 = new TextBox(new Rectangle(100, 100, 100, 20), 3);
             textBox1.setVisable(true);
