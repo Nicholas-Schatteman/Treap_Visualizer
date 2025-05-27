@@ -65,6 +65,14 @@ public class TextBox extends Button{
     }
 
     @Override
+    public void setVisable(boolean isVisable) {
+        super.setVisable(isVisable);
+        if (!isVisable){
+            offPress();
+        }
+    }
+
+    @Override
     public TextBox runPress(Point p) {
         int assignedPosition = (int)((p.x - hitBox.x) / (hitBox.height * GraphicsUtility.HEIGHT_TO_CWIDTH) + 1.0 / 2);
         if (assignedPosition > text.length()){
@@ -89,13 +97,13 @@ public class TextBox extends Button{
     }
 
     @Override
-    public void draw(Graphics g, Rectangle placement) {
+    protected void draw(Graphics g, Rectangle placement) {
 
         g.setColor(Color.GRAY);
         g.drawRect(placement.x, placement.y, placement.width, placement.height);
 
         g.setColor(Color.BLACK);
-        GraphicsUtility.drawString(g, text, placement.x, placement.y - TEXT_DISTANCE / 2, placement.height - TEXT_DISTANCE);
+        GraphicsUtility.drawString(g, text, placement.x, placement.y + placement.height - TEXT_DISTANCE / 2, placement.height - TEXT_DISTANCE);
 
         if (position != -1){
             double colorFactor = 255 * Math.abs(Math.cos((double)(Clock.systemUTC().millis() - timeSince) / 300));

@@ -15,7 +15,7 @@ abstract public class ImageButton extends Button{
     }
     
     @Override
-    public void draw(Graphics g, Rectangle placement){
+    protected void draw(Graphics g, Rectangle placement){
         g.drawImage(image, (int)placement.x, (int)placement.y, placement.width, placement.height, null);
     }
 

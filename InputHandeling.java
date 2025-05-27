@@ -27,10 +27,10 @@ public class InputHandeling extends JPanel{
     private double screenX;
     private double screenY;
     private Point previousMousePoint;
-    private ButtonBST buttons;
+    private ButtonSpacePartition buttons;
     private Button previousButton;
     private Button currentButton;
-    private DropDownButton dropSideButton; //Unveils operation insertions when hovered over
+    private DropDownMenu dropSideButton; //Unveils operation insertions when hovered over
     private TextBox currentTextBox;
     private int currentKeyCode;
     private Timer graphicsUpdate;
@@ -44,6 +44,7 @@ public class InputHandeling extends JPanel{
     final public int OPERATION_BUTTON_WIDTH = 30;
     final public int NEXT_BUTTON_X = 100;
     final public int NEXT_BUTTON_Y = 65;
+    final public int TEXT_BOX_HEIGHT = 15;
     
 
 
@@ -98,7 +99,13 @@ public class InputHandeling extends JPanel{
             }
             @Override
             public void mousePressed(MouseEvent e) {
-                currentButton = buttons.search(e.getPoint(), getBounds());
+                LinkedList<Button> currentButtons = buttons.search(e.getPoint(), getBounds());
+                if (!currentButtons.isEmpty() && buttons.search(e.getPoint(), getBounds()).getLast().isVisable()){
+                    currentButton = buttons.search(e.getPoint(), getBounds()).getLast();
+                }
+                else{
+                    currentButton = null;
+                }
                 previousMousePoint = e.getPoint();
             }
             @Override
@@ -107,7 +114,9 @@ public class InputHandeling extends JPanel{
                     previousButton.offPress();
                 }
 
-                if (currentButton == buttons.search(e.getPoint(), getBounds()) && currentButton != null){
+                LinkedList<Button> currentButtons = buttons.search(e.getPoint(), getBounds());
+
+                if (!currentButtons.isEmpty() && buttons.search(e.getPoint(), getBounds()).getLast().isVisable() && currentButton == buttons.search(e.getPoint(), getBounds()).getLast()){
                     currentTextBox = (TextBox)currentButton.runPress(e.getPoint());
                     currentButton.runPress(head);
                     previousButton = currentButton;
@@ -132,21 +141,16 @@ public class InputHandeling extends JPanel{
             @Override
             public void mouseMoved(MouseEvent e) {
                 //Sets cursor if over button based on what button shape is specified
-                Button b = buttons.search(e.getPoint(), getBounds());
-                if (b == null){
+                LinkedList<Button> b = buttons.search(e.getPoint(), getBounds());
+                if (b.isEmpty() || !b.getLast().isVisable()){
                     setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 }
                 else{
-                    setCursor(b.getCursor());
+                    setCursor(b.getLast().getCursor());
                 }
 
                 //If over drop side button unveil the buttons inside
-                if (dropSideButton.isOver(e.getPoint(), getBounds())){
-                    dropSideButton.runPress(e.getPoint());
-                }
-                else{
-                    dropSideButton.offPress();
-                }
+                dropSideButton.isOver(e.getPoint(), getBounds());
             }
         });
 
@@ -186,17 +190,34 @@ public class InputHandeling extends JPanel{
             head.insert(x1, x2);
         }
 
-        buttons = new ButtonBST();
-        addButtons();
+        buttons = addButtons();
 
         head.updatePosition();
         repaint();
     }
 
-    private void addButtons(){
+    private ButtonSpacePartition addButtons(){
         try{
+            LinkedList<Button> buttonsToAdd = new LinkedList<>();
             File imageFile = new File("Images\\Back.png");
             BufferedImage image = ImageIO.read(imageFile);
+
+            Button hudBackDrop = new Button(new Rectangle(0, UI_HEIGHT, 10000, UI_HEIGHT), Cursor.DEFAULT_CURSOR, Button.SW){
+                @Override
+                public void offPress() {}
+                @Override
+                public void runPress(BinaryTree tree) {}
+                @Override
+                public Button runPress(Point p) {return null;}
+
+                @Override
+                protected void draw(Graphics g, Rectangle placement) {
+                    g.setColor(Color.LIGHT_GRAY);
+                    g.fillRect(placement.x, placement.y, placement.width, placement.height);
+                }
+            };
+            hudBackDrop.setVisable(true);
+            buttonsToAdd.insert(hudBackDrop);
 
             ImageButton button = new ImageButton(new Rectangle(NEXT_BUTTON_X + OPERATION_SEPERATION, NEXT_BUTTON_Y, OPERATION_BUTTON_WIDTH, OPERATION_BUTTON_WIDTH), Cursor.HAND_CURSOR) {
                 @Override
@@ -222,12 +243,12 @@ public class InputHandeling extends JPanel{
             };
             button.setVisable(true);
             button.setImage(image);
-            buttons.insert(button);
+            buttonsToAdd.insert(button);
 
             imageFile = new File("Images\\Forward.png");
             image = ImageIO.read(imageFile);
         
-            button = new ImageButton(new Rectangle(NEXT_BUTTON_X+100, NEXT_BUTTON_Y+100, OPERATION_BUTTON_WIDTH, OPERATION_BUTTON_WIDTH), Cursor.HAND_CURSOR) {
+            button = new ImageButton(new Rectangle(NEXT_BUTTON_X, NEXT_BUTTON_Y, OPERATION_BUTTON_WIDTH, OPERATION_BUTTON_WIDTH), Cursor.HAND_CURSOR) {
                 @Override
                 public void offPress() {}
 
@@ -246,24 +267,34 @@ public class InputHandeling extends JPanel{
             };
             button.setVisable(true);
             button.setImage(image);
-            buttons.insert(button);
+            buttonsToAdd.insert(button);
 
-            dropSideButton = new DropDownButton(new Rectangle(100, 500, 50, 100), new Rectangle(50, 100, 100, 100), image) {
+            dropSideButton = new DropDownMenu(new Rectangle(45, 750, 30, 500), new Rectangle(45, 750, 200, 500)) {
+                final public int VERTICAL_BORDOR_DISTANCE = 5;
+                final public int HORIZONTAL_BORDOR_DISTANCE = 5;
+
                 @Override
-                public void draw(Graphics g, Rectangle placement) {
+                protected void draw(Graphics g, Rectangle placement) {
+                    g.setColor(Color.LIGHT_GRAY);
+                    g.fillRect(placement.x, placement.y, placement.width, placement.height);
                     g.setColor(Color.BLACK);
-                    g.drawRect(placement.x, placement.y, placement.width, placement.height);
+                    int xPoints[] = {placement.x + HORIZONTAL_BORDOR_DISTANCE, placement.x + HORIZONTAL_BORDOR_DISTANCE, placement.x + placement.width - HORIZONTAL_BORDOR_DISTANCE};
+                    int yPoints[] = {placement.y + VERTICAL_BORDOR_DISTANCE, placement.y + placement.height - VERTICAL_BORDOR_DISTANCE, placement.y + placement.height / 2};
+                    g.fillPolygon(xPoints, yPoints, 3);
                 }
             };
-            buttons.insert(dropSideButton);
+            dropSideButton.setVisable(true);
 
-            TextBox textBox1 = new TextBox(new Rectangle(100, 100, 100, 20), 3);
-            textBox1.setVisable(true);
-            buttons.insert(textBox1);
+            int textBoxWidth = (int)(GraphicsUtility.HEIGHT_TO_CWIDTH * 3 * TEXT_BOX_HEIGHT);
 
-            TextBox textBox2 = new TextBox(new Rectangle(150, 150, 75, 15), 6);
-            textBox2.setVisable(true);
-            buttons.insert(textBox2);
+            TextBox textBox1 = new TextBox(new Rectangle(100, 700, textBoxWidth, TEXT_BOX_HEIGHT), 3);
+            dropSideButton.insert(textBox1);
+            buttonsToAdd.insert(textBox1);
+
+            TextBox textBox2 = new TextBox(new Rectangle(100, 700 - TEXT_BOX_HEIGHT - 2, textBoxWidth, TEXT_BOX_HEIGHT), 3);
+
+            dropSideButton.insert(textBox2);
+            buttonsToAdd.insert(textBox2);
 
             SubmitTextButton submitionButton = new SubmitTextButton(new Rectangle(230, 100, 20, 20), textBox1, textBox2, "Insert") {
                 @Override
@@ -271,11 +302,12 @@ public class InputHandeling extends JPanel{
                     tree.insert(x, y);
                 }
             };
-            submitionButton.setVisable(true);
+            dropSideButton.insert(submitionButton);
+            buttonsToAdd.insert(submitionButton);
 
-            buttons.insert(submitionButton);
+            return new ButtonSpacePartition(buttonsToAdd, 0);
         }catch (IOException e){
-            
+            return null;
         }
     }
 
@@ -304,9 +336,8 @@ public class InputHandeling extends JPanel{
         }
         head.update(g, screenX, screenY, zoomFactor);
 
-        g.setColor(Color.LIGHT_GRAY);
-        g.fillRect(getBounds().x, getBounds().height - UI_HEIGHT, getBounds().width, UI_HEIGHT);
         buttons.update(g, getBounds());
+        dropSideButton.update(g, getBounds());
 
         
     }

@@ -1,13 +1,17 @@
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 
+//TODO: Fix issues with higher resolutions
 public class ButtonSpacePartition {
     private ButtonSpacePartitionNode head;
+    private LinkedList<Button> fullList; //Used to quickly run through all buttons in partition
     private Rectangle area;
     private int resolution;
 
     public ButtonSpacePartition(Rectangle area, int resolution){
         head = new ButtonSpacePartitionNode();
+        fullList = new LinkedList<>();
         this.area = area;
         this.resolution = resolution;
     }
@@ -16,6 +20,7 @@ public class ButtonSpacePartition {
         Point p1 = new Point();
         Point p2 = new Point();
         Rectangle currentButtonArea;
+        fullList = new LinkedList<>();
         while (buttons.hasNext()) {
             currentButtonArea = buttons.next().hitBox;
             
@@ -57,5 +62,13 @@ public class ButtonSpacePartition {
             throw new Error("This button is outside tracked area.");
         }
         head.insert(b, b.hitBox, area, resolution);
+        fullList.insert(b);
+    }
+
+    public void update(Graphics g, Rectangle bounds){
+        while (fullList.hasNext()) {
+            fullList.next().update(g, bounds);
+        }
+        fullList.restart();
     }
 }

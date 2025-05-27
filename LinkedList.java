@@ -106,6 +106,10 @@ public class LinkedList<T> {
         return current.value;
     }
 
+    public T getLast(){
+        return last.value;
+    }
+
     public void restart(){
         current = first;
         isFinished = false;

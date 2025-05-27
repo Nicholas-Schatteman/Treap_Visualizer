@@ -3,7 +3,7 @@ import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Point;
 
-abstract public class Button {
+abstract public class Button implements StaticVisualElement{
     protected Rectangle hitBox;
     private Cursor overCursor;
     private int relativeCorner;
@@ -25,7 +25,7 @@ abstract public class Button {
     }
 
     public Button(Rectangle hitBox, int cursorType, int orientation){
-        this(hitBox, new Cursor(cursorType),orientation);
+        this(hitBox, new Cursor(cursorType), orientation);
     }
 
     public Button(Rectangle hitBox, int cursorType){
@@ -38,8 +38,8 @@ abstract public class Button {
     }
 
     public boolean isOver(int x, int y, Rectangle border){
-        double xPos = -1;
-        double yPos = -1;
+        double xPos;
+        double yPos;
         
         switch (relativeCorner) {
             case NW:
@@ -64,6 +64,8 @@ abstract public class Button {
                 break;
 
             default:
+                xPos = -1;
+                yPos = -1;
                 break;
         }
 
@@ -104,6 +106,10 @@ abstract public class Button {
         return hitBox.x + hitBox.width / 2;
     }
 
+    public boolean isVisable(){
+        return isVisable;
+    }
+
     public void setCursor(Cursor c){
         overCursor = c;
     }
@@ -134,5 +140,5 @@ abstract public class Button {
 
     abstract public void runPress(BinaryTree tree);
 
-    abstract public void draw(Graphics g, Rectangle placement);
+    abstract protected void draw(Graphics g, Rectangle placement);
 }
